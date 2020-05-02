@@ -48,6 +48,13 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity tb_fir_filter_4 is
+		generic(
+		Win : INTEGER := 10; -- Input bit width
+		Wout : INTEGER := 12;-- Output bit width
+		BUTTON_HIGH : STD_LOGIC := '0';
+		Lfilter : INTEGER := 513; --Filter Length
+		RANGE_LOW : INTEGER := -512; --coeff range: power of 2
+		RANGE_HIGH : INTEGER := 511);
 end tb_fir_filter_4;
 
 architecture behave of tb_fir_filter_4 is
@@ -55,65 +62,66 @@ architecture behave of tb_fir_filter_4 is
 component fir_filter_4 
 port (
 	i_clk        : in  std_logic;
-	i_rstb       : in  std_logic;
+	reset       : in  std_logic;
 	-- coefficient
-	i_coeff_0    : in  std_logic_vector( 7 downto 0);
-	i_coeff_1    : in  std_logic_vector( 7 downto 0);
-	i_coeff_2    : in  std_logic_vector( 7 downto 0);
-	i_coeff_3    : in  std_logic_vector( 7 downto 0);
+	c_in    : in  std_logic_vector( Win-1 downto 0);
 	-- data input
-	i_data       : in  std_logic_vector( 7 downto 0);
+	x_in       : in  std_logic_vector(  Win-1 downto 0);
 	-- filtered data 
-	o_data       : out std_logic_vector( 9 downto 0));
+	y_out       : out std_logic_vector( Wout-1 downto 0));
 end component;
 
-signal i_clk        : std_logic:='0';
-signal i_rstb       : std_logic:='0';
--- coefficient
-signal i_coeff_0    : std_logic_vector( 7 downto 0):= std_logic_vector(to_signed(-10,8));
-signal i_coeff_1    : std_logic_vector( 7 downto 0):= std_logic_vector(to_signed(110,8));
-signal i_coeff_2    : std_logic_vector( 7 downto 0):= std_logic_vector(to_signed(127,8));
-signal i_coeff_3    : std_logic_vector( 7 downto 0):= std_logic_vector(to_signed(-20,8));
+	component fir_filter_4 
+	port (
+		clk       : in  std_logic;
+		reset       : in  std_logic;
+		Load_x      : in  std_logic;  -- Load/run switch
+		x_in        : in  std_logic_vector( Win-1 downto 0);
+		c_in        : in  std_logic_vector( Win-1 downto 0);
+		y_out       : out std_logic_vector( Wout-1 downto 0));
+	end component;
+
+
+signal clk        : std_logic:='0';
+signal reset        : std_logic:='0';
+-- coefficient 
+signal c_in   		: std_logic_vector( Win-1 downto 0);
 -- data input
-signal i_data       : std_logic_vector( 7 downto 0);
+signal x_in         : std_logic_vector( Win-1 downto 0);
 -- filtered data 
-signal o_data       : std_logic_vector( 9 downto 0);
+signal y_out        : std_logic_vector( Wout-1 downto 0);
 
 begin
 
-i_clk   <= not i_clk after 5 ns;
-i_rstb  <= '0', '1' after 132 ns;
+clk   <= not clk after 5 ns;
+reset  <= '0', '1' after 132 ns;
 
 u_fir_filter_4 : fir_filter_4 
 port map(
-	i_clk        => i_clk        ,
-	i_rstb       => i_rstb       ,
-	-- coefficient
-	i_coeff_0    => i_coeff_0    ,
-	i_coeff_1    => i_coeff_1    ,
-	i_coeff_2    => i_coeff_2    ,
-	i_coeff_3    => i_coeff_3    ,
-	-- data input
-	i_data       => i_data       ,
+	clk      => clk        ,
+	reset    => reset       ,
+	Load_x   => Load_x      ,
+	x_in     => x_in       ,
+	c_in     => c_in    ,
 	-- filtered data 
-	o_data       => o_data       );
+	y_out    => y_out       );
 
 ------------------------------------------------------------------------------------------------------------------------
 -- FIR delta input, step input
 ------------------------------------------------------------------------------------------------------------------------
 
-p_input : process (i_rstb,i_clk)
+p_input : process (reset,clk)
 variable control            : unsigned(10 downto 0):= (others=>'0');
 begin
-	if(i_rstb='0') then
-		i_data       <= (others=>'0');
-	elsif(rising_edge(i_clk)) then
+	if(reset=BUTTON_HIGH) then
+		x_in       <= (others=>'0');
+	elsif(rising_edge(clk)) then
 		if(control=10) then  -- delta
-			i_data       <= ('0',others=>'1');
+			x_in       <= ('0',others=>'1');
 		elsif(control(7)='1') then  -- step
-			i_data       <= ('0',others=>'1');
+			x_in       <= ('0',others=>'1');
 		else
-			i_data       <= (others=>'0');
+			x_in       <= (others=>'0');
 		end if;
 		control := control + 1;
 	end if;
