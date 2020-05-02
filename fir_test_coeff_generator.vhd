@@ -12,7 +12,6 @@ entity fir_test_coeff_generator is
 	port (
 		clock                   : in  std_logic;
 		reset                   : in  std_logic;
-		start_generation        : in  std_logic;
 		coeff                   : out std_logic_vector( Win-1 downto 0); 
 		write_enable            : out std_logic);
 	end fir_test_data_generator;

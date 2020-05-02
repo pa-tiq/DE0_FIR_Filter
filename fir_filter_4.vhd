@@ -28,9 +28,9 @@ ARCHITECTURE fpga OF fir_filter_4 IS
 	TYPE ARR_SLV_Wadd IS ARRAY (0 TO L-1) OF SLV_Wadd;
 	SIGNAL  x  :  SLV_Win;
 	SIGNAL  y  :  SLV_Wadd;
-	SIGNAL  coeff  :  ARR_SLV_Win ; -- Coefficient array
-	SIGNAL  product  :  ARR_SLV_Wmult ; -- Product array
-	SIGNAL  adder  :  ARR_SLV_Wadd ; -- Adder array
+	SIGNAL  c  :  ARR_SLV_Win ; -- Coefficient array
+	SIGNAL  p  :  ARR_SLV_Wmult ; -- Product array
+	SIGNAL  a  :  ARR_SLV_Wadd ; -- Adder array
 
 BEGIN
 	Load: PROCESS(clk, reset, c_in, c, x_in) 

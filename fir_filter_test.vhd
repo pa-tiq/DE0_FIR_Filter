@@ -6,7 +6,7 @@ entity fir_filter_test is
 	generic(
 		Win : INTEGER := 10; -- Input bit width
 		Wout : INTEGER := 12;-- Output bit width
-		Lfilter : INTEGER := 513 --Filter Length
+		Lfilter : INTEGER := 513; --Filter Length
 		RANGE_LOW : INTEGER := -512; --coeff range: power of 2
 		RANGE_HIGH : INTEGER := 511);
 	port (
@@ -81,7 +81,6 @@ begin
 	port map(
 		clock                 => i_clk                   ,
 		reset                 => i_rstb                  ,
-		start_generation      => i_start_generation      ,
 		coeff                 => coeff            		 ,
 		write_enable          => w_write_enable          );	
 
