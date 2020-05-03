@@ -23,9 +23,9 @@ ARCHITECTURE fpga OF fir_filter_4 IS
 	SUBTYPE SLV_Win IS STD_LOGIC_VECTOR(Win-1 DOWNTO 0);
 	SUBTYPE SLV_Wmult IS STD_LOGIC_VECTOR(Wmult-1 DOWNTO 0);
 	SUBTYPE SLV_Wadd IS STD_LOGIC_VECTOR(Wadd-1 DOWNTO 0);
-	TYPE ARR_SLV_Win IS ARRAY (0 TO L-1) OF SLV_Win;
-	TYPE ARR_SLV_Wmult IS ARRAY (0 TO L-1) OF SLV_Wmult;
-	TYPE ARR_SLV_Wadd IS ARRAY (0 TO L-1) OF SLV_Wadd;
+	TYPE ARR_SLV_Win IS ARRAY (0 TO LFilter-1) OF SLV_Win;
+	TYPE ARR_SLV_Wmult IS ARRAY (0 TO LFilter-1) OF SLV_Wmult;
+	TYPE ARR_SLV_Wadd IS ARRAY (0 TO LFilter-1) OF SLV_Wadd;
 	SIGNAL  x  :  SLV_Win;
 	SIGNAL  y  :  SLV_Wadd;
 	SIGNAL  c  :  ARR_SLV_Win ; -- Coefficient array
@@ -37,13 +37,13 @@ BEGIN
 	BEGIN    ------> Load data or coefficients
 		IF reset = BUTTON_HIGH THEN -- clear data and coefficients reg
 			x <= (OTHERS => '0');
-			FOR K IN 0 TO L-1 LOOP
+			FOR K IN 0 TO LFilter-1 LOOP
 				c(K) <= (OTHERS => '0');
 			END LOOP;
 		ELSIF rising_edge(clk) THEN
 			IF Load_x = '1' THEN
-				c(L-1) <= c_in;  -- Store coefficient in register
-				FOR I IN L-2 DOWNTO 0 LOOP  -- Coefficients shift one
+				c(LFilter-1) <= c_in;  -- Store coefficient in register
+				FOR I IN LFilter-2 DOWNTO 0 LOOP  -- Coefficients shift one
 					c(I) <= c(I+1);
 				END LOOP;
 			ELSE
@@ -55,21 +55,21 @@ BEGIN
 	SOP: PROCESS (clk, reset, a, p)-- Compute sum-of-products
 	BEGIN
 		IF reset = BUTTON_HIGH THEN -- clear tap registers
-			FOR K IN 0 TO L-1 LOOP
+			FOR K IN 0 TO LFilter-1 LOOP
 				a(K) <= (OTHERS => '0');
 			END LOOP;
 		ELSIF rising_edge(clk) THEN
-			FOR I IN 0 TO L-2  LOOP -- Compute the transposed
+			FOR I IN 0 TO LFilter-2  LOOP -- Compute the transposed
 				a(I) <= (p(I)(Wmult-1) & p(I)) + a(I+1); -- filter adds
 			END LOOP;
-			a(L-1) <= p(L-1)(Wmult-1) & p(L-1); -- First TAP has only a register
+			a(LFilter-1) <= p(LFilter-1)(Wmult-1) & p(LFilter-1); -- First TAP has only a register
 		END IF;                              
 		y <= a(0);
 	END PROCESS SOP;
 	
 	-- Instantiate L multipliers
 	
-	MulGen: FOR I IN 0 TO L-1 GENERATE
+	MulGen: FOR I IN 0 TO LFilter-1 GENERATE
 		p(i) <= c(i) * x;
 	END GENERATE;
 	

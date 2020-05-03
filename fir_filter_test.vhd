@@ -38,7 +38,7 @@ architecture rtl of fir_filter_test is
 		start_generation        : in  std_logic;
 		coeff                   : out std_logic_vector( Win-1 downto 0); 
 		write_enable            : out std_logic);
-	end fir_test_data_generator;
+	end component;
 
 	component fir_filter_4 
 	port (

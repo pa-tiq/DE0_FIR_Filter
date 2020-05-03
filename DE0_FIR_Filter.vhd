@@ -34,7 +34,7 @@
 --
 -- ******************************************************************** 
 --
--- Fle Name: de0_fir_filter_test.vhd
+-- Fle Name: DE0_FIR_Filter.vhd
 -- 
 -- scope: DE0 top level for _fir_filter_test
 -- button(2) : start generation data
@@ -50,7 +50,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity de0_fir_filter_test is
+entity DE0_FIR_Filter is
 generic( 
 	Win : INTEGER := 10; -- Input bit width
 	Wmult : INTEGER := 20;-- Multiplier bit width 2*W1
@@ -59,7 +59,7 @@ generic(
 	BUTTON_HIGH : STD_LOGIC := '0';
 	PATTERN_SIZE: INTEGER := 32;
 	RANGE_LOW : INTEGER := -512; --pattern range: power of 2
-	RANGE_HIGH : INTEGER := 511); --must change pattern too
+	RANGE_HIGH : INTEGER := 511; --must change pattern too
 	LFilter  : INTEGER := 513); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
@@ -140,9 +140,9 @@ port (
 	pad_o_gpio1_clkout                         : out   std_logic_vector(1 downto 0);  -- gpio connection 1 clock out bus
 	pad_b_gpio1_d                              : inout std_logic_vector(31 downto 0)  -- gpio connection 1 data bus
 	);
-end de0_fir_filter_test;
+end DE0_FIR_Filter;
 
-architecture rtl of de0_fir_filter_test is
+architecture rtl of DE0_FIR_Filter is
 
 component seven_seg_driver
 port(
