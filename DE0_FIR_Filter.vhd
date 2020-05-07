@@ -1,66 +1,23 @@
--- ******************************************************************** 
--- ******************************************************************** 
--- 
--- Coding style summary:
---
---	i_   Input signal 
---	o_   Output signal 
---	b_   Bi-directional signal 
---	r_   Register signal 
---	w_   Wire signal (no registered logic) 
---	t_   User-Defined Type 
---	p_   pipe
---  pad_ PAD used in the top level
---	G_   Generic (UPPER CASE)
---	C_   Constant (UPPER CASE)
---  ST_  FSM state definition (UPPER CASE)
---
--- ******************************************************************** 
---
--- Copyright ©2015 SURF-VHDL
---
---    This program is free software: you can redistribute it and/or modify
---    it under the terms of the GNU General Public License as published by
---    the Free Software Foundation, either version 3 of the License, or
---    (at your option) any later version.
---
---    This program is distributed in the hope that it will be useful,
---    but WITHOUT ANY WARRANTY; without even the implied warranty of
---    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---    GNU General Public License for more details.
---
---    You should have received a copy of the GNU General Public License
---    along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- ******************************************************************** 
---
--- Fle Name: DE0_FIR_Filter.vhd
--- 
--- scope: DE0 top level for _fir_filter_test
--- button(2) : start generation data
--- button(1) : read request for memory
--- button(0) : reset
---
--- rev 1.00
--- 
--- ******************************************************************** 
--- ******************************************************************** 
-
+PACKAGE n_bit_int IS    -- User defined types
+	SUBTYPE S8 IS INTEGER RANGE -128 TO 127;
+	TYPE AS8 IS ARRAY (0 TO 3) OF S8;
+	TYPE AS8_32 IS ARRAY (0 TO 31) OF S8;
+END n_bit_int;
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity DE0_FIR_Filter is
 generic( 
-	Win : INTEGER := 10; -- Input bit width
-	Wmult : INTEGER := 20;-- Multiplier bit width 2*W1
-	Wadd : INTEGER := 28;-- Adder width = Wmult+log2(L)-1
-	Wout : INTEGER := 12;-- Output bit width
-	BUTTON_HIGH : STD_LOGIC := '0';
-	PATTERN_SIZE: INTEGER := 32;
-	RANGE_LOW : INTEGER := -512; --pattern range: power of 2
-	RANGE_HIGH : INTEGER := 511; --must change pattern too
-	LFilter  : INTEGER := 513); -- Filter length
+	Win 			: INTEGER 	:= 7		; -- Input bit width
+	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 9		;-- Output bit width
+	BUTTON_HIGH 	: STD_LOGIC := '0'		;
+	PATTERN_SIZE	: INTEGER 	:= 32		;
+	RANGE_LOW 		: INTEGER 	:= -128		; --pattern range: power of 2
+	RANGE_HIGH 		: INTEGER 	:= 127		; --must change pattern too
+	LFilter  		: INTEGER 	:= 513		); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
 	pad_i_clock_50                             : in    std_logic;  --	50 MHz
@@ -159,6 +116,16 @@ port(
 end component;
 
 component fir_filter_test
+generic(
+	Win 		: INTEGER	; -- Input bit width
+	Wmult 		: INTEGER	;-- Multiplier bit width 2*W1
+	Wadd 		: INTEGER	;-- Adder width = Wmult+log2(L)-1
+	Wout 		: INTEGER	;-- Output bit width
+	Lfilter 	: INTEGER	; --Filter Length
+	RANGE_LOW 	: INTEGER	; --coeff range: power of 2
+	RANGE_HIGH 	: INTEGER	;
+	BUTTON_HIGH : STD_LOGIC ;
+	PATTERN_SIZE: INTEGER   );
 port (
 	i_clk                   : in  std_logic;
 	i_rstb                  : in  std_logic;
@@ -232,6 +199,16 @@ w_start_generation   <= not pad_i_button(2);
 w_read_request       <= not pad_i_button(1);
 
 u_fir_filter_test : fir_filter_test
+generic map(
+	Win 	   	=> Win			,
+	Wmult 	   	=> Wmult		,
+	Wadd 	   	=> Wadd			,
+	Wout 	  	=> Wout			,
+	Lfilter 	=> Lfilter		,
+	RANGE_LOW 	=> RANGE_LOW	,
+	RANGE_HIGH 	=> RANGE_HIGH	,
+	BUTTON_HIGH => BUTTON_HIGH	,
+	PATTERN_SIZE=> PATTERN_SIZE )
 port map(
 	i_clk                   => w_clk                   ,
 	i_rstb                  => w_rstb                  ,

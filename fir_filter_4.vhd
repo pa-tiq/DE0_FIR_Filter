@@ -1,79 +1,124 @@
-library ieee;
-use ieee.std_logic_1164.all;	-- log2(512) = 9
-use ieee.numeric_std.all;		-- 20+9-1 = 28
+LIBRARY work;
+USE work.n_bit_int.ALL;
 
-entity fir_filter_4 is
-	generic( 
-		Win : INTEGER := 10; -- Input bit width
-		Wmult : INTEGER := 20;-- Multiplier bit width 2*W1
-		Wadd : INTEGER := 28;-- Adder width = Wmult+log2(L)-1
-		Wout : INTEGER := 12;-- Output bit width
-		BUTTON_HIGH : STD_LOGIC := '0';
-		LFilter  : INTEGER := 513); -- Filter length
-	port (
-		clk    : IN STD_LOGIC;  -- System clock
-		reset  : IN STD_LOGIC;  -- Asynchron reset
-		Load_x : IN  STD_LOGIC;  -- Load/run switch
-		x_in   : IN  STD_LOGIC_VECTOR(Win-1 DOWNTO 0);-- System input
-		c_in   : IN  STD_LOGIC_VECTOR(Win-1 DOWNTO 0);-- Coefficient data input
-		y_out  : OUT STD_LOGIC_VECTOR(Wout-1 DOWNTO 0));-- System output 
-end fir_filter_4;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_arith.ALL;
+
+ENTITY fir_filter_4 IS 
+GENERIC(BUTTON_HIGH : STD_LOGIC);
+PORT (clk   :   IN  STD_LOGIC	; -- System clock
+	  reset :   IN  STD_LOGIC	; -- Asynchron reset
+	  x     :   IN  S8			; -- System input
+	  y     :   OUT S8			);-- System output
+END fir_filter_4;
 
 ARCHITECTURE fpga OF fir_filter_4 IS
-	SUBTYPE SLV_Win IS STD_LOGIC_VECTOR(Win-1 DOWNTO 0);
-	SUBTYPE SLV_Wmult IS STD_LOGIC_VECTOR(Wmult-1 DOWNTO 0);
-	SUBTYPE SLV_Wadd IS STD_LOGIC_VECTOR(Wadd-1 DOWNTO 0);
-	TYPE ARR_SLV_Win IS ARRAY (0 TO LFilter-1) OF SLV_Win;
-	TYPE ARR_SLV_Wmult IS ARRAY (0 TO LFilter-1) OF SLV_Wmult;
-	TYPE ARR_SLV_Wadd IS ARRAY (0 TO LFilter-1) OF SLV_Wadd;
-	SIGNAL  x  :  SLV_Win;
-	SIGNAL  y  :  SLV_Wadd;
-	SIGNAL  c  :  ARR_SLV_Win ; -- Coefficient array
-	SIGNAL  p  :  ARR_SLV_Wmult ; -- Product array
-	SIGNAL  a  :  ARR_SLV_Wadd ; -- Adder array
-
+	SIGNAL t1,t2,t3,t4 : S8;
+	SIGNAL tap : AS8;
 BEGIN
-	Load: PROCESS(clk, reset, c_in, c, x_in) 
-	BEGIN    ------> Load data or coefficients
-		IF reset = BUTTON_HIGH THEN -- clear data and coefficients reg
-			x <= (OTHERS => '0');
-			FOR K IN 0 TO LFilter-1 LOOP
-				c(K) <= (OTHERS => '0');
-			END LOOP;
-		ELSIF rising_edge(clk) THEN
-			IF Load_x = '1' THEN
-				c(LFilter-1) <= c_in;  -- Store coefficient in register
-				FOR I IN LFilter-2 DOWNTO 0 LOOP  -- Coefficients shift one
-					c(I) <= c(I+1);
-				END LOOP;
-			ELSE
-				x <= x_in;  -- Get one data sample at a time
-			END IF;
-		END IF;
-	END PROCESS Load;
-	
-	SOP: PROCESS (clk, reset, a, p)-- Compute sum-of-products
+	P1: PROCESS(clk, reset, x, tap) -- Behavioral Style	
 	BEGIN
-		IF reset = BUTTON_HIGH THEN -- clear tap registers
-			FOR K IN 0 TO LFilter-1 LOOP
-				a(K) <= (OTHERS => '0');
+		IF reset = '0' THEN   -- clear shift register
+			FOR K IN 0 TO 3 LOOP
+				tap(K) <= 0;
 			END LOOP;
+			y<=0;
 		ELSIF rising_edge(clk) THEN
-			FOR I IN 0 TO LFilter-2  LOOP -- Compute the transposed
-				a(I) <= (p(I)(Wmult-1) & p(I)) + a(I+1); -- filter adds
+		-- Compute output y with the filter coefficients weight.
+		-- The coefficients are [-1  3.75  3.75  -1].
+		-- Division for Altera VHDL is only allowed for
+		-- powers-of-two values!
+			WAIT UNTIL clk = '1';  -- Pipelined all operations
+			t1 <= tap(1) + tap(2); -- Use symmetry of coefficients
+			t2 <= tap(0) + tap(3); -- and pipeline adder
+			t3 <= 4*t1-t1/4;  --Pipelined CSD multiplier
+			t4 <= -t2;  -- Build a binary tree and add delay
+			y <=  t3 + t4;
+			FOR I IN 3 DOWNTO 1 LOOP
+				tap(I) <= tap(I-1); -- Tapped delay line: shift one
 			END LOOP;
-			a(LFilter-1) <= p(LFilter-1)(Wmult-1) & p(LFilter-1); -- First TAP has only a register
-		END IF;                              
-		y <= a(0);
-	END PROCESS SOP;
-	
-	-- Instantiate L multipliers
-	
-	MulGen: FOR I IN 0 TO LFilter-1 GENERATE
-		p(i) <= c(i) * x;
-	END GENERATE;
-	
-	y_out <= y(Wadd-1 DOWNTO Wadd-Wout);
-	
+		END IF;
+		tap(0) <= x; -- Input in register 0
+	END PROCESS P1;
 END fpga;
-			
+
+--    0.0028
+--	  0.0084
+--   -0.0079
+--   -0.0044
+--    0.0111
+--   -0.0017
+--   -0.0109
+--    0.0083
+--    0.0070
+--   -0.0131
+--    0.0001
+--    0.0144
+--   -0.0086
+--   -0.0108
+--    0.0160
+--    0.0026
+--   -0.0196
+--    0.0089
+--    0.0170
+--   -0.0206
+--   -0.0074
+--    0.0289
+--   -0.0090
+--   -0.0297
+--    0.0301
+--    0.0188
+--   -0.0525
+--    0.0091
+--    0.0723
+--   -0.0695
+--   -0.0860
+--    0.3054
+--    0.5908
+--    0.3054
+--   -0.0860
+--   -0.0695
+--    0.0723
+--    0.0091
+--   -0.0525
+--    0.0188
+--    0.0301
+--   -0.0297
+--   -0.0090
+--    0.0289
+--   -0.0074
+--   -0.0206
+--    0.0170
+--    0.0089
+--   -0.0196
+--    0.0026
+--    0.0160
+--   -0.0108
+--   -0.0086
+--    0.0144
+--    0.0001
+--   -0.0131
+--    0.0070
+--    0.0083
+--   -0.0109
+--   -0.0017
+--    0.0111
+--   -0.0044
+--   -0.0079
+--    0.0084
+--    0.0028
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

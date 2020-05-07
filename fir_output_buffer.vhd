@@ -1,21 +1,26 @@
+LIBRARY work;
+USE work.n_bit_int.ALL;
+
 library ieee;
 use ieee.std_logic_1164.all;
+USE ieee.std_logic_arith.ALL;
 use ieee.numeric_std.all;
 
 entity fir_output_buffer is
-	generic(
-		Win : INTEGER := 10; -- Input bit width
-		Wout : INTEGER := 12;-- Output bit width
-		Lfilter  : INTEGER := 513; -- Filter length
-		BUTTON_HIGH : STD_LOGIC := '0';
-		PATTERN_SIZE: INTEGER := 32;
-		RANGE_LOW : INTEGER := -512; --pattern range: power of 2
-		RANGE_HIGH : INTEGER := 511); --must change pattern too
+	generic( 
+		Win 		: INTEGER	; -- Input bit width
+		Wout 		: INTEGER	;-- Output bit width
+		BUTTON_HIGH : STD_LOGIC	;
+		PATTERN_SIZE: INTEGER	;
+		RANGE_LOW	: INTEGER 	; 
+		RANGE_HIGH 	: INTEGER 	;
+		LFilter  	: INTEGER	); -- Filter length
 	port (
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;
 		i_write_enable          : in  std_logic;
-		i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR 
+		--i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR
+		i_data                  : in  S8; -- from FIR
 		i_read_request          : in  std_logic;
 		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
 		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
@@ -23,7 +28,7 @@ end fir_output_buffer;
 
 architecture rtl of fir_output_buffer is
 
-	type t_output_buffer_mem is array(0 to PATTERN_SIZE-1) of std_logic_vector( Wout-1 downto 0);
+	--type t_output_buffer_mem is array(0 to PATTERN_SIZE-1) of std_logic_vector( Wout-1 downto 0);
 
 	component edge_detector
 	port (
@@ -33,7 +38,7 @@ architecture rtl of fir_output_buffer is
 		o_pulse                     : out std_logic);
 	end component;
 
-	signal output_buffer_mem           : t_output_buffer_mem ; 
+	signal output_buffer_mem           : AS8_32 ; 
 	signal r_write_add                 : integer range 0 to PATTERN_SIZE-1;
 	signal r_read_add                  : integer range 0 to PATTERN_SIZE-1;
 	signal w_read_pulse                : std_logic;
@@ -83,9 +88,9 @@ architecture rtl of fir_output_buffer is
 				if(i_write_enable='1') then
 					output_buffer_mem(r_write_add) <= i_data;
 				end if;
-
-				o_data <= output_buffer_mem(r_read_add);
-				end if;
+				--o_data <= output_buffer_mem(r_read_add);
+				o_data <= std_logic_vector(to_signed(output_buffer_mem(r_read_add),Wout));
+			end if;
 	end process p_memory;
 
 	o_test_add  <= std_logic_vector(to_unsigned(r_read_add,5));

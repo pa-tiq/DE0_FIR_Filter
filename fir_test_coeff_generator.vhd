@@ -4,11 +4,11 @@ use ieee.numeric_std.all;
 
 entity fir_test_coeff_generator is
 	generic(
-		Win : INTEGER := 10; -- Input bit width
-		Lfilter  : INTEGER := 513; -- Filter length (ALWAYS ODD: order+1)
-		BUTTON_HIGH : STD_LOGIC := '0';
-		RANGE_LOW : INTEGER := -512; --coeff range: power of 2
-		RANGE_HIGH : INTEGER := 511);
+		Win 		: INTEGER 	 ; -- Input bit width
+		BUTTON_HIGH : STD_LOGIC  ;
+		Lfilter  	: INTEGER 	 ; -- Filter length (ALWAYS ODD: order+1)
+		RANGE_LOW 	: INTEGER 	 ; --coeff range: power of 2
+		RANGE_HIGH 	: INTEGER 	 );
 	port (
 		clock                   : in  std_logic;
 		reset                   : in  std_logic;
