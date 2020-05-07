@@ -38,7 +38,8 @@ architecture rtl of fir_output_buffer is
 		o_pulse                     : out std_logic);
 	end component;
 
-	signal output_buffer_mem           : AS8_32 ; 
+	signal output_buffer_mem           : AS8_32 ;
+	signal op 						   : std_logic_vector( Wout-1 downto 0);
 	signal r_write_add                 : integer range 0 to PATTERN_SIZE-1;
 	signal r_read_add                  : integer range 0 to PATTERN_SIZE-1;
 	signal w_read_pulse                : std_logic;
@@ -89,7 +90,8 @@ architecture rtl of fir_output_buffer is
 					output_buffer_mem(r_write_add) <= i_data;
 				end if;
 				--o_data <= output_buffer_mem(r_read_add);
-				o_data <= std_logic_vector(to_signed(output_buffer_mem(r_read_add),Wout));
+				op <= std_logic_vector(to_signed(output_buffer_mem(r_read_add),Wout));
+				o_data <= op;
 			end if;
 	end process p_memory;
 

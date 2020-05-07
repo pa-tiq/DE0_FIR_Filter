@@ -29,7 +29,7 @@ BEGIN
 		-- The coefficients are [-1  3.75  3.75  -1].
 		-- Division for Altera VHDL is only allowed for
 		-- powers-of-two values!
-			WAIT UNTIL clk = '1';  -- Pipelined all operations
+			--WAIT UNTIL clk = '1';  -- Pipelined all operations
 			t1 <= tap(1) + tap(2); -- Use symmetry of coefficients
 			t2 <= tap(0) + tap(3); -- and pipeline adder
 			t3 <= 4*t1-t1/4;  --Pipelined CSD multiplier

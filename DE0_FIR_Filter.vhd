@@ -141,7 +141,7 @@ signal w_clk                      : std_logic;
 signal w_pattern_sel              : std_logic;  -- '0'=> delta; '1'=> step
 signal w_start_generation         : std_logic;
 signal w_read_request             : std_logic;
-signal w_data_buffer              : std_logic_vector( Wout-1 downto 0); -- to seven segment
+signal data_buffer             	  : std_logic_vector( Wout-1 downto 0); -- to seven segment
 signal w_test_add                 : std_logic_vector( 4 downto 0); -- test read address
 
 -- SEVEN SEGMENT
@@ -183,9 +183,9 @@ port map(
 	o_h3                       => pad_o_hex3_d               );
 
 -- SEVEN SEGMENT
-w_h0_in                    <= w_data_buffer(3 downto 0);
-w_h1_in                    <= w_data_buffer(7 downto 4);
-w_h2_in                    <= w_data_buffer(11 downto 8);
+w_h0_in                    <= data_buffer(3 downto 0);
+w_h1_in                    <= data_buffer(7 downto 4);
+w_h2_in                    <= "000"&data_buffer(8);
 w_h3_in                    <= w_test_add(3 downto 0);
 
 pad_o_hex0_dp              <= '0';
@@ -215,7 +215,7 @@ port map(
 	i_pattern_sel           => w_pattern_sel           ,
 	i_start_generation      => w_start_generation      ,
 	i_read_request          => w_read_request          ,
-	o_data_buffer           => w_data_buffer           ,
+	o_data_buffer           => data_buffer             ,
 	o_test_add              => w_test_add              );
 
 ------------------------------------------------------------------------------------------------------------------

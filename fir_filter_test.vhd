@@ -107,9 +107,10 @@ architecture rtl of fir_filter_test is
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;
 		i_write_enable          : in  std_logic;
-		i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR 
+		i_data                  : in  S8; -- from FIR 
 		i_read_request          : in  std_logic;
 		--o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
+		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
 		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
 	end component;
 
