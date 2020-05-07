@@ -1,3 +1,9 @@
+PACKAGE n_bit_int IS    -- User defined types
+	SUBTYPE S8 IS INTEGER RANGE -128 TO 127;
+	TYPE AS8 IS ARRAY (0 TO 3) OF S8;
+	TYPE AS8_32 IS ARRAY (0 TO 31) OF S8;
+END n_bit_int;
+
 LIBRARY work;
 USE work.n_bit_int.ALL;
 

@@ -6,19 +6,12 @@ add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/i_pattern_sel
 add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/i_start_generation
 add wave -noupdate -format Literal -radix decimal /tb_fir_test_data_coeff_generator/o_data
 add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/o_write_enable
-add wave -noupdate -format Literal -radix decimal /tb_fir_test_data_coeff_generator/coeff
 TreeUpdate [SetDefaultTree]
 quietly WaveActivateNextPane
 add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/i_clk
 add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/i_rstb
 add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/i_pattern_sel
 add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/i_start_generation
-add wave -noupdate -format Literal -radix decimal /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/o_data
-add wave -noupdate -format Literal -radix decimal /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/coeff
-add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/o_write_enable
-add wave -noupdate -format Literal /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/r_write_counter
-add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/r_write_counter_ena
-add wave -noupdate -format Logic /tb_fir_test_data_coeff_generator/u_fir_test_data_coeff_generator/w_start_pulse
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ns} 0}
 configure wave -namecolwidth 229

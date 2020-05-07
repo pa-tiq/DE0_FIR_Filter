@@ -15,26 +15,26 @@ architecture behave of tb_fir_test_coeff_generator is
 
 component fir_test_data_generator 
 port (
-	clock                   : in  std_logic;
-	reset                  : in  std_logic;
-	i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
-	start_generation      : in  std_logic;
+	clock                   : in  std_logic			;
+	reset                   : in  std_logic			;
+	i_pattern_sel           : in  std_logic			;  -- '0'=> delta; '1'=> step
+	start_generation      	: in  std_logic			;
 	o_data                  : out std_logic_vector( 7 downto 0); -- to FIR 
-	write_enable          : out std_logic);  -- to the output buffer
+	write_enable          	: out std_logic			);  -- to the output buffer
 end component;
 
-component fir_test_coeff_generator 
-port (
-		clock                   : in  std_logic;
-		reset                   : in  std_logic;
-		start_generation        : in  std_logic;
-		coeff                   : out std_logic_vector( Win-1 downto 0); 
-		write_enable            : out std_logic);
-end fir_test_data_generator;
+--component fir_test_coeff_generator 
+--port (
+--		clock                   : in  std_logic;
+--		reset                   : in  std_logic;
+--		start_generation        : in  std_logic;
+--		coeff                   : out std_logic_vector( Win-1 downto 0); 
+--		write_enable            : out std_logic);
+--end component;
 
 signal i_pattern_sel           : std_logic;  -- '0'=delta; '1'=step
 
-signal coeff                   : std_logic_vector( Win-1 downto 0);
+--signal coeff                   : std_logic_vector( Win-1 downto 0);
 signal clock                   : std_logic:='0';
 signal reset                   : std_logic;
 signal start_generation        : std_logic;

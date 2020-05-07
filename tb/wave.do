@@ -1,25 +1,18 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate -format Logic /tb_fir_filter_4/clock
+add wave -noupdate -format Logic /tb_fir_filter_4/clk
 add wave -noupdate -format Logic /tb_fir_filter_4/reset
-add wave -noupdate -format Logic /tb_fir_filter_4/Load_x
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/c_in
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/x_in
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/y_out
-add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter_4/x_in
-add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter_4/y_out
+add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/x
+add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/y
+add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter_4/x
+add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter_4/y
 add wave -noupdate -format Literal -radix unsigned /tb_fir_filter_4/p_input/control
 TreeUpdate [SetDefaultTree]
 quietly WaveActivateNextPane
-add wave -noupdate -format Logic -radix decimal /tb_fir_filter_4/u_fir_filter_4/clock
+add wave -noupdate -format Logic -radix decimal /tb_fir_filter_4/u_fir_filter_4/clk
 add wave -noupdate -format Logic -radix decimal /tb_fir_filter_4/u_fir_filter_4/reset
-add wave -noupdate -format Logic -radix decimal /tb_fir_filter_4/u_fir_filter_4/Load_x
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/c_in
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/x_in
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/y_out
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/c
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/p
-add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/a
+add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/x
+add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/y
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {13466 ns} 0}
 configure wave -namecolwidth 150

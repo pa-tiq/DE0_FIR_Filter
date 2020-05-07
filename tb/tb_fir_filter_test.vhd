@@ -4,12 +4,12 @@ use ieee.numeric_std.all;
 
 entity tb_fir_filter_test is
 	generic(
-	Win : INTEGER := 10; -- Input bit width
-	Wout : INTEGER := 12;-- Output bit width
+	Win : INTEGER := 8; -- Input bit width
+	Wout : INTEGER := 9;-- Output bit width
 	Lfilter : INTEGER := 513; --Filter Length
 	BUTTON_HIGH : STD_LOGIC = '0';
-	RANGE_LOW : INTEGER := -512; --coeff range: power of 2
-	RANGE_HIGH : INTEGER := 511);
+	RANGE_LOW : INTEGER := -128; --coeff range: power of 2
+	RANGE_HIGH : INTEGER := 127);
 end tb_fir_filter_test;
 
 architecture behave of tb_fir_filter_test is
@@ -54,12 +54,12 @@ port map(
 
 p_input : process (i_rstb,i_clk)
 variable control            : unsigned(Win+1 downto 0):= (others=>'0');
-variable controlCoeff : unsigned(Win+1 downto 0):= (others=>'0');
+--variable controlCoeff : unsigned(Win+1 downto 0):= (others=>'0');
 begin
 	if(i_rstb=BUTTON_HIGH) then
 		i_start_generation           <= '0';
 	elsif(rising_edge(i_clk)) then
-		if(controlCoeff =Lfilter) then
+--		if(controlCoeff =Lfilter) then
 			if(control=10) then 
 				i_start_generation       <= '1';
 			else
@@ -72,8 +72,8 @@ begin
 			else
 				i_read_request           <= '0';
 			end if;
-		else
-			controlCoeff := controlCoeff+1;
+--		else
+--			controlCoeff := controlCoeff+1;
 	end if;
 end process p_input;
 

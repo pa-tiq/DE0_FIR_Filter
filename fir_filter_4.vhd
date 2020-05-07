@@ -6,11 +6,13 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_arith.ALL;
 
 ENTITY fir_filter_4 IS 
-GENERIC(BUTTON_HIGH : STD_LOGIC);
-PORT (clk   :   IN  STD_LOGIC	; -- System clock
-	  reset :   IN  STD_LOGIC	; -- Asynchron reset
-	  x     :   IN  S8			; -- System input
-	  y     :   OUT S8			);-- System output
+GENERIC(
+	BUTTON_HIGH : STD_LOGIC := '0');
+PORT (
+	clk   :   IN  STD_LOGIC	; -- System clock
+	reset :   IN  STD_LOGIC	; -- Asynchron reset
+	x     :   IN  S8			; -- System input
+	y     :   OUT S8			);-- System output
 END fir_filter_4;
 
 ARCHITECTURE fpga OF fir_filter_4 IS
