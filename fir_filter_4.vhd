@@ -1,3 +1,10 @@
+PACKAGE n_bit_int IS    -- User defined types
+	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
+	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
+	TYPE AS8i IS ARRAY (0 TO 3) OF S8i;
+	TYPE AS8i_32 IS ARRAY (0 TO 31) OF S8i;
+END n_bit_int;
+
 LIBRARY work;
 USE work.n_bit_int.ALL;
 
@@ -11,31 +18,35 @@ GENERIC(
 PORT (
 	clk   :   IN  STD_LOGIC	; -- System clock
 	reset :   IN  STD_LOGIC	; -- Asynchron reset
-	x     :   IN  S8			; -- System input
-	y     :   OUT S8			);-- System output
+	x     :   IN  S8i		; -- System input
+	y     :   OUT S8o		);-- System output
 END fir_filter_4;
 
 ARCHITECTURE fpga OF fir_filter_4 IS
-	SIGNAL t1,t2,t3,t4 : S8;
-	SIGNAL tap : AS8;
+	SIGNAL t1,t2,t3,t4 : S8o;
+	SIGNAL tap : AS8i;
 BEGIN
 	P1: PROCESS(clk, reset, x, tap) -- Behavioral Style	
 	BEGIN
 		IF reset = '0' THEN   -- clear shift register
 			FOR K IN 0 TO 3 LOOP
 				tap(K) <= 0;
-			END LOOP;
+			END LOOP;			
 			y<=0;
+			t1<=0;
+			t2<=0;
+			t3<=0;
+			t4<=0;
 		ELSIF rising_edge(clk) THEN
 		-- Compute output y with the filter coefficients weight.
-		-- The coefficients are [-1  3.75  3.75  -1].
+		-- The coefficients are [-0.5  0.5  0.5  -0.5].
 		-- Division for Altera VHDL is only allowed for
 		-- powers-of-two values!
 			--WAIT UNTIL clk = '1';  -- Pipelined all operations
 			t1 <= tap(1) + tap(2); -- Use symmetry of coefficients
 			t2 <= tap(0) + tap(3); -- and pipeline adder
-			t3 <= 4*t1-t1/4;  --Pipelined CSD multiplier
-			t4 <= -t2;  -- Build a binary tree and add delay
+			t3 <= t1-t1/2;  --Pipelined CSD multiplier
+			t4 <= -t2/2;  -- Build a binary tree and add delay
 			y <=  t3 + t4;
 			FOR I IN 3 DOWNTO 1 LOOP
 				tap(I) <= tap(I-1); -- Tapped delay line: shift one

@@ -1,5 +1,6 @@
 PACKAGE n_bit_int IS    -- User defined types
-	SUBTYPE S8 IS INTEGER RANGE -128 TO 127;
+	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
+	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
 	TYPE AS8 IS ARRAY (0 TO 3) OF S8;
 	TYPE AS8_32 IS ARRAY (0 TO 31) OF S8;
 END n_bit_int;
@@ -96,8 +97,8 @@ architecture rtl of fir_filter_test is
 	port (
 		clk       	: in  std_logic;
 		reset       : in  std_logic;
-		x       	: IN  INTEGER RANGE RANGE_LOW TO RANGE_HIGH;
-		y       	: OUT INTEGER RANGE RANGE_LOW TO RANGE_HIGH);
+		x       	: IN  S8i;
+		y       	: OUT S8o);
 	end component;
 
 	component fir_output_buffer 
@@ -113,7 +114,7 @@ architecture rtl of fir_filter_test is
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;
 		i_write_enable          : in  std_logic;
-		i_data                  : in  S8; -- from FIR 
+		i_data                  : in  S8o; -- from FIR 
 		i_read_request          : in  std_logic;
 		--o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
 		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
@@ -125,8 +126,8 @@ architecture rtl of fir_filter_test is
 	--signal w_data_filter           : std_logic_vector( Wout-1 downto 0);
 
 	signal w_write_enable          : std_logic;
-	signal w_data_test             : INTEGER RANGE RANGE_LOW TO RANGE_HIGH;
-	signal w_data_filter           : S8;
+	signal w_data_test             : S8i;
+	signal w_data_filter           : S8o;
 
 begin
 

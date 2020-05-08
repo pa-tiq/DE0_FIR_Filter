@@ -20,15 +20,15 @@ entity fir_test_data_generator is
 		i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
 		i_start_generation      : in  std_logic;
 		--o_data                  : out std_logic_vector( Win-1 downto 0); -- to FIR
-		o_data 					: out integer range RANGE_LOW to RANGE_HIGH;
+		o_data 					: out S8i;
 		o_write_enable          : out std_logic);  -- to the output buffer
 end fir_test_data_generator;
 
 architecture rtl of fir_test_data_generator is
 
-constant C_PATTERN_DELTA     : AS8_32 := (
+constant C_PATTERN_DELTA     : AS8i_32 := (
 	   0  ,
-	 127  ,
+	  10  ,
 	   0  ,
 	   0  ,
 	   0  ,
@@ -60,24 +60,24 @@ constant C_PATTERN_DELTA     : AS8_32 := (
 	   0  ,
 	   0  );
 
-constant C_PATTERN_STEP      : AS8_32 := (
+constant C_PATTERN_STEP      : AS8i_32 := (
 	   0  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
+	  10  ,
 	   0  ,
 	   0  ,
 	   0  ,

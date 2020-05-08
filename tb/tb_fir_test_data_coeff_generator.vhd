@@ -1,3 +1,6 @@
+LIBRARY work;
+USE work.n_bit_int.ALL;
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -19,19 +22,8 @@ port (
 	i_rstb                  : in  std_logic;
 	i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
 	i_start_generation      : in  std_logic;
-	o_data                  : out std_logic_vector( Win-1 downto 0); -- to FIR 
+	o_data                  : out S8i; -- to FIR 
 	o_write_enable          : out std_logic);  -- to the output buffer
-end component;
-
-
-component fir_test_data_generator 
-port (
-	clock                   : in  std_logic;
-	reset                  : in  std_logic;
-	i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
-	start_generation      : in  std_logic;
-	o_data                  : out std_logic_vector( Win-1 downto 0); -- to FIR 
-	write_enable          : out std_logic);  -- to the output buffer
 end component;
 
 signal i_clk                   : std_logic:='0';
@@ -39,7 +31,7 @@ signal i_rstb                  : std_logic;
 signal i_pattern_sel           : std_logic;  -- '0'=> delta; '1'=> step
 signal i_start_generation      : std_logic;
 -- data input
-signal o_data                  : std_logic_vector( Win-1 downto 0); -- to FIR 
+signal o_data                  : S8i; -- to FIR 
 -- filtered data 
 --signal o_write_enable          : std_logic;  -- to the output buffer
 --signal coeff                   : std_logic_vector( Win-1 downto 0);

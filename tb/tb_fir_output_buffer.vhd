@@ -22,7 +22,7 @@ port (
 	i_rstb                  : in  std_logic;
 	i_write_enable          : in  std_logic;
 --	i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR
-	i_data                  : in  S8 -- from FIR
+	i_data                  : in  S8o -- from FIR
 	i_read_request          : in  std_logic;
 	o_data                  : out std_logic_vector( Wout-1  downto 0); -- to seven segment
 	o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
@@ -32,7 +32,7 @@ signal i_clk                   : std_logic:='0';
 signal i_rstb                  : std_logic;
 signal i_write_enable          : std_logic;
 --signal i_data                  : std_logic_vector( Wout-1  downto 0); -- from FIR 
-signal i_data                  : S8 -- from FIR 
+signal i_data                  : S8o -- from FIR 
 signal i_read_request          : std_logic;
 signal o_data                  : std_logic_vector( Wout-1  downto 0); -- to seven segment
 signal o_test_add              : std_logic_vector( 4 downto 0); -- test read address

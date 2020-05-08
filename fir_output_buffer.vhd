@@ -20,7 +20,7 @@ entity fir_output_buffer is
 		i_rstb                  : in  std_logic;
 		i_write_enable          : in  std_logic;
 		--i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR
-		i_data                  : in  S8; -- from FIR
+		i_data                  : in  S8o; -- from FIR
 		i_read_request          : in  std_logic;
 		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
 		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
@@ -38,7 +38,7 @@ architecture rtl of fir_output_buffer is
 		o_pulse                     : out std_logic);
 	end component;
 
-	signal output_buffer_mem           : AS8_32 ;
+	signal output_buffer_mem           : AS8i_32 ;
 	signal op 						   : std_logic_vector( Wout-1 downto 0);
 	signal r_write_add                 : integer range 0 to PATTERN_SIZE-1;
 	signal r_read_add                  : integer range 0 to PATTERN_SIZE-1;
