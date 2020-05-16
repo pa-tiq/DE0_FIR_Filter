@@ -1,60 +1,104 @@
-PACKAGE n_bit_int IS    -- User defined types
-	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
-	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
-	TYPE AS8i IS ARRAY (0 TO 3) OF S8i;
-	TYPE AS8i_32 IS ARRAY (0 TO 31) OF S8i;
-END n_bit_int;
 
-LIBRARY work;
-USE work.n_bit_int.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_arith.ALL;
+entity fir_filter_4 is
+generic( 
+	Win 			: INTEGER 	:= 8		; -- Input bit width
+	Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 17		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 10		;-- Output bit width
+	BUTTON_HIGH 	: STD_LOGIC := '0'		;
+	LFilter  		: INTEGER 	:= 4		;-- Filter length
+	LfilterHalf		: INTEGER 	:= 2		); 
+port (
+	i_clk        : in  std_logic							;
+	i_rstb       : in  std_logic							;
+	i_data       : in  std_logic_vector( Win-1 	downto 0)	;
+	o_data       : out std_logic_vector( Wout-1 downto 0)   );
+end fir_filter_4;
 
-ENTITY fir_filter_4 IS 
-GENERIC(
-	BUTTON_HIGH : STD_LOGIC := '0');
-PORT (
-	clk   :   IN  STD_LOGIC	; -- System clock
-	reset :   IN  STD_LOGIC	; -- Asynchron reset
-	x     :   IN  S8i		; -- System input
-	y     :   OUT S8o		);-- System output
-END fir_filter_4;
+architecture rtl of fir_filter_4 is
 
-ARCHITECTURE fpga OF fir_filter_4 IS
-	SIGNAL t1,t2,t3,t4 : S8o;
-	SIGNAL tap : AS8i;
-BEGIN
-	P1: PROCESS(clk, reset, x, tap) -- Behavioral Style	
-	BEGIN
-		IF reset = '0' THEN   -- clear shift register
-			FOR K IN 0 TO 3 LOOP
-				tap(K) <= 0;
-			END LOOP;			
-			y<=0;
-			t1<=0;
-			t2<=0;
-			t3<=0;
-			t4<=0;
-		ELSIF rising_edge(clk) THEN
-		-- Compute output y with the filter coefficients weight.
-		-- The coefficients are [-0.5  0.5  0.5  -0.5].
-		-- Division for Altera VHDL is only allowed for
-		-- powers-of-two values!
-			--WAIT UNTIL clk = '1';  -- Pipelined all operations
-			t1 <= tap(1) + tap(2); -- Use symmetry of coefficients
-			t2 <= tap(0) + tap(3); -- and pipeline adder
-			t3 <= t1-t1/2;  --Pipelined CSD multiplier
-			t4 <= -t2/2;  -- Build a binary tree and add delay
-			y <=  t3 + t4;
-			FOR I IN 3 DOWNTO 1 LOOP
-				tap(I) <= tap(I-1); -- Tapped delay line: shift one
-			END LOOP;
-		END IF;
-		tap(0) <= x; -- Input in register 0
-	END PROCESS P1;
-END fpga;
+signal add_size : unsigned () 
+
+type t_data    		  is array (0 to Lfilter-1) 	of signed(Win-1  	downto 0);
+type t_mult           is array (0 to Lfilter-1) 	of signed(Wmult-1   downto 0);
+type t_add_st0        is array (0 to LfilterHalf-1) of signed(Wadd-1 	downto 0);
+
+signal coeff              : t_data					;
+signal data               : t_data					;
+signal mult               : t_mult					;
+signal add_st0            : t_add_st0				;
+signal add_st1            : signed(Wadd downto 0)	;
+
+begin
+		
+	p_input : process (i_rstb,i_clk)
+	begin
+		if(i_rstb=BUTTON_HIGH) then
+			data       <= (others=>(others=>'0'));
+			coeff      <= (others=>(others=>'0'));
+		elsif(rising_edge(i_clk)) then
+			data      <= signed(i_data)&data(0 to data'length-2);
+			--output = to_signed(input, output'length);
+			coeff(0)  <= to_signed(-10,Win);
+			coeff(1)  <= to_signed(110,Win);
+			coeff(2)  <= to_signed(127,Win);
+			coeff(3)  <= to_signed(-20,Win);
+		end if;
+	end process p_input;
+
+	p_mult : process (i_rstb,i_clk)
+	begin
+		if(i_rstb=BUTTON_HIGH) then
+			mult       <= (others=>(others=>'0'));
+		elsif(rising_edge(i_clk)) then
+			for k in 0 to Lfilter-1 loop
+				mult(k)       <= data(k) * coeff(k);
+			end loop;
+		end if;
+	end process p_mult;
+
+	p_add_st0 : process (i_rstb,i_clk)
+	begin
+		if(i_rstb=BUTTON_HIGH) then
+			add_st0     <= (others=>(others=>'0'));
+		elsif(rising_edge(i_clk)) then
+			for k in 0 to LfilterHalf-1 loop
+				add_st0(k)     <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
+				-- add0(0) <= mult(0) + mult(1)
+				-- add0(1) <= mult(2) + mult(3)
+				-- ...
+			end loop;
+		end if;
+	end process p_add_st0;
+
+	p_add_st1 : process (i_rstb,i_clk)
+	begin
+		if(i_rstb=BUTTON_HIGH) then
+			add_st1     <= (others=>'0');
+		elsif(rising_edge(i_clk)) then
+			for k in 0 to LfilterHalf-1 loop
+				add_st1     <= resize(add_st0(k),Wadd+1)  + add_st1;
+			end loop;
+			--add_st1     <= resize(add_st0(0),Wadd+1)  + resize(add_st0(1),Wadd+1);
+		end if;
+	end process p_add_st1;
+
+	p_output : process (i_rstb,i_clk)
+	begin
+		if(i_rstb=BUTTON_HIGH) then
+			o_data     <= (others=>'0');
+		elsif(rising_edge(i_clk)) then
+			o_data     <= std_logic_vector(add_st1(Wadd downto Wadd-9)); --divide by 128
+		end if;
+	end process p_output;
+
+
+end rtl;
+
 
 --    0.0028
 --	  0.0084
