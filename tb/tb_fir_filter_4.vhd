@@ -14,62 +14,57 @@ use ieee.numeric_std.all;
 
 entity tb_fir_filter_4 is
 	generic( 
-	Win			 : INTEGER 		:= 8;
-	BUTTON_HIGH  : STD_LOGIC 	:= '0');
+		Win 			: INTEGER 	:= 8		; -- Input bit width
+		Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
+		Wadd 			: INTEGER 	:= 17		;-- Adder width = Wmult+log2(L)-1
+		Wout 			: INTEGER 	:= 10		;-- Output bit width
+		BUTTON_HIGH 	: STD_LOGIC := '0'		;
+		LFilter  		: INTEGER 	:= 4		;-- Filter length
+		LfilterHalf		: INTEGER 	:= 2		); 
 end tb_fir_filter_4;
 
 architecture behave of tb_fir_filter_4 is
 
-component fir_filter_4 
-port (
-	clk    : IN  STD_LOGIC	;  -- System clock
-	reset  : IN  STD_LOGIC	;  -- Asynchron reset
-	x 	   : IN  S8i			;-- System input
-	y  	   : OUT S8o			);-- System output 
-end component;
+	component fir_filter_4 
+	port (
+		clk    : IN  STD_LOGIC								;  -- System clock
+		reset  : IN  STD_LOGIC								;  -- Asynchron reset
+		i_data : IN  std_logic_vector( Win-1 	downto 0)	;-- System input
+		o_data : OUT std_logic_vector( Wout-1 	downto 0)	);-- System output 
+	end component;
 
-signal clk          : std_logic:='0';
-signal reset        : std_logic:='0';
-signal x         	: S8i;
-signal y        	: S8o;
-signal x_in			: std_logic_vector(Win-1 downto 0);
+	signal clk          : std_logic:='0';
+	signal reset        : std_logic:='0';
+	signal i_data       : std_logic_vector( Win-1   downto 0);
+	signal o_data       : std_logic_vector( Wout-1  downto 0);
 
 begin
 
-clk   <= not clk after 5 ns;
-reset  <= '0', '1' after 132 ns;
+	clk   <= not clk after 5 ns;
+	reset  <= '0', '1' after 132 ns;
 
-u_fir_filter_4 : fir_filter_4 
-port map(
-	clk         => clk        ,
-	reset       => reset      ,
-	x       	=> x      	  ,
-	y  	   		=> y	  	  );
+	u_fir_filter_4 : fir_filter_4 
+	port map(
+		clk         => clk        ,
+		reset       => reset      ,
+		i_data      => i_data     ,
+		o_data      => o_data     );
 
-p_input : process (reset,clk)
-variable control : unsigned(10 downto 0):= (others=>'0');
---variable controlCoeff : unsigned(Win-1 downto 0):= (others=>'0');
-begin
-	if(reset='0') then
-		x       <= 0;
-		x_in    <= (others => '0');
-	elsif(rising_edge(clk)) then
---		if(controlCoeff = LFilter) then
+	p_input : process (reset,clk)
+	variable control  : unsigned(10 downto 0):= (others=>'0');
+	begin
+		if(reset=BUTTON_HIGH) then
+			i_data       <= (others=>'0');
+		elsif(rising_edge(clk)) then
 			if(control=10) then  -- delta
-				x_in    <= ('0',others=>'1');
-				x 		<=  to_integer(signed(x_in));
+				i_data       <= ('0',others=>'1');
 			elsif(control(7)='1') then  -- step
-				x_in    <= ('0',others=>'1');
-				x 		<=  to_integer(signed(x_in));
-			--else
-				--x_in       <= (others=>'0');
-				--x <=  0;
+				i_data       <= ('0',others=>'1');
+			else
+				i_data       <= (others=>'0');
 			end if;
 			control := control + 1;
---		else
---			controlCoeff := controlCoeff +1;
-	end if;
-end process p_input;
-
+		end if;
+	end process p_input;
 
 end behave;

@@ -13,15 +13,13 @@ generic(
 	LFilter  		: INTEGER 	:= 4		;-- Filter length
 	LfilterHalf		: INTEGER 	:= 2		); 
 port (
-	i_clk        : in  std_logic							;
-	i_rstb       : in  std_logic							;
-	i_data       : in  std_logic_vector( Win-1 	downto 0)	;
-	o_data       : out std_logic_vector( Wout-1 downto 0)   );
+	clk      : in  std_logic							;
+	reset    : in  std_logic							;
+	i_data   : in  std_logic_vector( Win-1 	downto 0)	;
+	o_data   : out std_logic_vector( Wout-1 downto 0)   );
 end fir_filter_4;
 
-architecture rtl of fir_filter_4 is
-
-signal add_size : unsigned () 
+architecture rtl of fir_filter_4 is 
 
 type t_data    		  is array (0 to Lfilter-1) 	of signed(Win-1  	downto 0);
 type t_mult           is array (0 to Lfilter-1) 	of signed(Wmult-1   downto 0);
@@ -35,12 +33,12 @@ signal add_st1            : signed(Wadd downto 0)	;
 
 begin
 		
-	p_input : process (i_rstb,i_clk)
+	p_input : process (reset,clk)
 	begin
-		if(i_rstb=BUTTON_HIGH) then
+		if(reset=BUTTON_HIGH) then
 			data       <= (others=>(others=>'0'));
 			coeff      <= (others=>(others=>'0'));
-		elsif(rising_edge(i_clk)) then
+		elsif(rising_edge(clk)) then
 			data      <= signed(i_data)&data(0 to data'length-2);
 			--output = to_signed(input, output'length);
 			coeff(0)  <= to_signed(-10,Win);
@@ -50,22 +48,22 @@ begin
 		end if;
 	end process p_input;
 
-	p_mult : process (i_rstb,i_clk)
+	p_mult : process (reset,clk)
 	begin
-		if(i_rstb=BUTTON_HIGH) then
+		if(reset=BUTTON_HIGH) then
 			mult       <= (others=>(others=>'0'));
-		elsif(rising_edge(i_clk)) then
+		elsif(rising_edge(clk)) then
 			for k in 0 to Lfilter-1 loop
-				mult(k)       <= data(k) * coeff(k);
+				mult(k)  <= data(k) * coeff(k);
 			end loop;
 		end if;
 	end process p_mult;
 
-	p_add_st0 : process (i_rstb,i_clk)
+	p_add_st0 : process (reset,clk)
 	begin
-		if(i_rstb=BUTTON_HIGH) then
+		if(reset=BUTTON_HIGH) then
 			add_st0     <= (others=>(others=>'0'));
-		elsif(rising_edge(i_clk)) then
+		elsif(rising_edge(clk)) then
 			for k in 0 to LfilterHalf-1 loop
 				add_st0(k)     <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
 				-- add0(0) <= mult(0) + mult(1)
@@ -75,11 +73,11 @@ begin
 		end if;
 	end process p_add_st0;
 
-	p_add_st1 : process (i_rstb,i_clk)
+	p_add_st1 : process (reset,clk)
 	begin
-		if(i_rstb=BUTTON_HIGH) then
+		if(reset=BUTTON_HIGH) then
 			add_st1     <= (others=>'0');
-		elsif(rising_edge(i_clk)) then
+		elsif(rising_edge(clk)) then
 			for k in 0 to LfilterHalf-1 loop
 				add_st1     <= resize(add_st0(k),Wadd+1)  + add_st1;
 			end loop;
@@ -87,15 +85,14 @@ begin
 		end if;
 	end process p_add_st1;
 
-	p_output : process (i_rstb,i_clk)
+	p_output : process (reset,clk)
 	begin
-		if(i_rstb=BUTTON_HIGH) then
+		if(reset=BUTTON_HIGH) then
 			o_data     <= (others=>'0');
-		elsif(rising_edge(i_clk)) then
-			o_data     <= std_logic_vector(add_st1(Wadd downto Wadd-9)); --divide by 128
+		elsif(rising_edge(clk)) then
+			o_data     <= std_logic_vector(add_st1(Wadd downto (Wadd-9))); --divide by 128, i.e. shift right 7 bits
 		end if;
 	end process p_output;
-
 
 end rtl;
 
