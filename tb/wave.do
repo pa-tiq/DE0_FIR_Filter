@@ -2,6 +2,7 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -format Logic /tb_fir_filter_4/clk
 add wave -noupdate -format Logic /tb_fir_filter_4/reset
+add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/i_coeff
 add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/i_data
 add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/o_data
 add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter_4/i_data
@@ -11,6 +12,7 @@ TreeUpdate [SetDefaultTree]
 quietly WaveActivateNextPane
 add wave -noupdate -format Logic -radix decimal /tb_fir_filter_4/u_fir_filter_4/clk
 add wave -noupdate -format Logic -radix decimal /tb_fir_filter_4/u_fir_filter_4/reset
+add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/i_coeff
 add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/i_data
 add wave -noupdate -format Literal -radix decimal /tb_fir_filter_4/u_fir_filter_4/o_data
 TreeUpdate [SetDefaultTree]

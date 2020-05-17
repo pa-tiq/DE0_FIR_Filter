@@ -1,15 +1,14 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 PACKAGE n_bit_int IS
-	generic( 
-		Win 			: INTEGER 	:= 8		; -- Input bit width
-		LFilter  		: INTEGER 	:= 4		);-- Filter length
-	port(
-		SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(Win-1 DOWNTO 0)	; 
-		TYPE ARRAY_COEFF IS ARRAY (0 TO LFilter-1) OF COEFF_TYPE);
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; 
+	TYPE ARRAY_COEFF IS ARRAY (0 TO 3) OF COEFF_TYPE;
 END n_bit_int;
 
 LIBRARY work;
 USE work.n_bit_int.ALL;
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -48,25 +47,28 @@ begin
 	p_input : process (reset,clk)
 	begin
 		if(reset=BUTTON_HIGH) then
-			data       <= (others=>(others=>'0'));
-			coeff      <= (others=>(others=>'0'));
+			data   <= (others=>(others=>'0'));
+			coeff  <= (others=>(others=>'0'));
 		elsif(rising_edge(clk)) then
-			data      <= signed(i_data)&data(0 to data'length-2);
+			data <= signed(i_data)&data(0 to data'length-2);
+			for k in 0 to Lfilter-1 loop
+				coeff(k)  <= signed(i_coeff(k));
+			end loop;				  
 			--output = to_signed(input, output'length);
-			coeff(0)  <= to_signed(-10,Win);
-			coeff(1)  <= to_signed(110,Win);
-			coeff(2)  <= to_signed(127,Win);
-			coeff(3)  <= to_signed(-20,Win);
+			--coeff(0)  <= to_signed(-10,Win);
+			--coeff(1)  <= to_signed(110,Win);
+			--coeff(2)  <= to_signed(127,Win);
+			--coeff(3)  <= to_signed(-20,Win);
 		end if;
 	end process p_input;
 
 	p_mult : process (reset,clk)
 	begin
 		if(reset=BUTTON_HIGH) then
-			mult       <= (others=>(others=>'0'));
+			mult <= (others=>(others=>'0'));
 		elsif(rising_edge(clk)) then
 			for k in 0 to Lfilter-1 loop
-				mult(k)  <= data(k) * coeff(k);
+				mult(k) <= data(k) * coeff(k);
 			end loop;
 		end if;
 	end process p_mult;
@@ -74,10 +76,10 @@ begin
 	p_add_st0 : process (reset,clk)
 	begin
 		if(reset=BUTTON_HIGH) then
-			add_st0     <= (others=>(others=>'0'));
+			add_st0 <= (others=>(others=>'0'));
 		elsif(rising_edge(clk)) then
 			for k in 0 to LFilterHalf-1 loop
-				add_st0(k)     <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
+				add_st0(k) <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
 				-- add0(0) <= mult(0) + mult(1)
 				-- add0(1) <= mult(2) + mult(3)
 				-- ...
@@ -86,28 +88,29 @@ begin
 	end process p_add_st0;
 
 	p_add_st1 : process (reset,clk)
+		variable add_temp  : signed(Wadd downto 0);
 	begin
+		add_temp := (others=>'0');
 		if(reset=BUTTON_HIGH) then
-			add_st1     <= (others=>'0');
-		elsif(rising_edge(clk)) then
+			add_st1  <= (others=>'0');
+		elsif(rising_edge(clk)) then			
 			for k in 0 to LFilterHalf-1 loop
-				add_st1     <= resize(add_st0(k),Wadd+1)  + add_st1;
+				add_temp := resize(add_st0(k),Wadd+1) + add_temp;
 			end loop;
-			--add_st1     <= resize(add_st0(0),Wadd+1)  + resize(add_st0(1),Wadd+1);
+			add_st1 <= add_temp;					
 		end if;
 	end process p_add_st1;
 
 	p_output : process (reset,clk)
 	begin
 		if(reset=BUTTON_HIGH) then
-			o_data     <= (others=>'0');
+			o_data  <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			o_data     <= std_logic_vector(add_st1(Wadd downto (Wadd-9))); --divide by 128, i.e. shift right 7 bits
+			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-9))); --divide by 128, i.e. shift right 7 bits			
 		end if;
 	end process p_output;
 
 end rtl;
-
 
 --    0.0028
 --	  0.0084

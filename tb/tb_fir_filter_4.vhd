@@ -1,15 +1,14 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 PACKAGE n_bit_int IS
-	generic( 
-		Win 			: INTEGER 	:= 8		; -- Input bit width
-		LFilter  		: INTEGER 	:= 4		);-- Filter length
-	port(
-		SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(Win-1 DOWNTO 0)	; 
-		TYPE ARRAY_COEFF IS ARRAY (0 TO LFilter-1) OF COEFF_TYPE);
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; 
+	TYPE ARRAY_COEFF IS ARRAY (0 TO 3) OF COEFF_TYPE;
 END n_bit_int;
 
 LIBRARY work;
 USE work.n_bit_int.ALL;
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -39,14 +38,16 @@ architecture behave of tb_fir_filter_4 is
 	signal clk          : std_logic:='0';
 	signal reset        : std_logic:='0';
 	signal i_coeff 		: ARRAY_COEFF	; 
-	signal i_coeff(0)   := std_logic_vector(to_signed(-10,Win-1));
-	signal i_coeff(1)   := std_logic_vector(to_signed(110,Win-1));
-	signal i_coeff(2)   := std_logic_vector(to_signed(127,Win-1));
-	signal i_coeff(3)   := std_logic_vector(to_signed(-20,Win-1));
+
 	signal i_data       : std_logic_vector( Win-1  downto 0) 	 ;
 	signal o_data       : std_logic_vector( Wout-1 downto 0) 	 ;
 
 begin
+
+	i_coeff(0)   <= std_logic_vector(to_signed(-10,Win));
+	i_coeff(1)   <= std_logic_vector(to_signed(110,Win));
+	i_coeff(2)   <= std_logic_vector(to_signed(127,Win));
+	i_coeff(3)   <= std_logic_vector(to_signed(-20,Win));
 
 	clk   <= not clk after 5 ns;
 	reset  <= '0', '1' after 132 ns;
@@ -55,6 +56,7 @@ begin
 	port map(
 		clk         => clk        ,
 		reset       => reset      ,
+		i_coeff 	=> i_coeff	  ,
 		i_data      => i_data     ,
 		o_data      => o_data     );
 
