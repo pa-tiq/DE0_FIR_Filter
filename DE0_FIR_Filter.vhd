@@ -1,9 +1,21 @@
-PACKAGE n_bit_int IS    -- User defined types
-	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
-	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
-	TYPE AS8 IS ARRAY (0 TO 3) OF S8;
-	TYPE AS8_32 IS ARRAY (0 TO 31) OF S8;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+--PACKAGE n_bit_int IS    -- User defined types
+--	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
+--	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
+--	TYPE AS8 IS ARRAY (0 TO 3) OF S8;
+--	TYPE AS8_32 IS ARRAY (0 TO 31) OF S8;
+--END n_bit_int;
+
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
+	TYPE ARRAY_COEFF IS ARRAY (0 TO 3) OF COEFF_TYPE; --LFilter-1
 END n_bit_int;
+
+LIBRARY work;
+USE work.n_bit_int.ALL;
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
