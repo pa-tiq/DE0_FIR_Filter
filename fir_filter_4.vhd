@@ -1,3 +1,14 @@
+PACKAGE n_bit_int IS
+	generic( 
+		Win 			: INTEGER 	:= 8		; -- Input bit width
+		LFilter  		: INTEGER 	:= 4		);-- Filter length
+	port(
+		SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(Win-1 DOWNTO 0)	; 
+		TYPE ARRAY_COEFF IS ARRAY (0 TO LFilter-1) OF COEFF_TYPE);
+END n_bit_int;
+
+LIBRARY work;
+USE work.n_bit_int.ALL;
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -11,25 +22,26 @@ generic(
 	Wout 			: INTEGER 	:= 10		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
 	LFilter  		: INTEGER 	:= 4		;-- Filter length
-	LfilterHalf		: INTEGER 	:= 2		); 
+	LFilterHalf		: INTEGER 	:= 2		); 
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
+	i_coeff  : in  ARRAY_COEFF							;
 	i_data   : in  std_logic_vector( Win-1 	downto 0)	;
 	o_data   : out std_logic_vector( Wout-1 downto 0)   );
 end fir_filter_4;
 
 architecture rtl of fir_filter_4 is 
 
-type t_data    		  is array (0 to Lfilter-1) 	of signed(Win-1  	downto 0);
-type t_mult           is array (0 to Lfilter-1) 	of signed(Wmult-1   downto 0);
-type t_add_st0        is array (0 to LfilterHalf-1) of signed(Wadd-1 	downto 0);
+type t_data    is array (0 to Lfilter-1) 	 of signed(Win-1   downto 0);
+type t_mult    is array (0 to Lfilter-1) 	 of signed(Wmult-1 downto 0);
+type t_add_st0 is array (0 to LFilterHalf-1) of signed(Wadd-1  downto 0);
 
-signal coeff              : t_data					;
-signal data               : t_data					;
-signal mult               : t_mult					;
-signal add_st0            : t_add_st0				;
-signal add_st1            : signed(Wadd downto 0)	;
+signal coeff     : t_data				;
+signal data      : t_data				;
+signal mult      : t_mult				;
+signal add_st0   : t_add_st0			;
+signal add_st1   : signed(Wadd downto 0);
 
 begin
 		
@@ -64,7 +76,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			add_st0     <= (others=>(others=>'0'));
 		elsif(rising_edge(clk)) then
-			for k in 0 to LfilterHalf-1 loop
+			for k in 0 to LFilterHalf-1 loop
 				add_st0(k)     <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
 				-- add0(0) <= mult(0) + mult(1)
 				-- add0(1) <= mult(2) + mult(3)
@@ -78,7 +90,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			add_st1     <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			for k in 0 to LfilterHalf-1 loop
+			for k in 0 to LFilterHalf-1 loop
 				add_st1     <= resize(add_st0(k),Wadd+1)  + add_st1;
 			end loop;
 			--add_st1     <= resize(add_st0(0),Wadd+1)  + resize(add_st0(1),Wadd+1);

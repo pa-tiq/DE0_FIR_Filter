@@ -1,8 +1,10 @@
-PACKAGE n_bit_int IS    -- User defined types
-	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
-	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
-	TYPE AS8i IS ARRAY (0 TO 3) OF S8i;
-	TYPE AS8i_32 IS ARRAY (0 TO 31) OF S8i;
+PACKAGE n_bit_int IS
+	generic( 
+		Win 			: INTEGER 	:= 8		; -- Input bit width
+		LFilter  		: INTEGER 	:= 4		);-- Filter length
+	port(
+		SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(Win-1 DOWNTO 0)	; 
+		TYPE ARRAY_COEFF IS ARRAY (0 TO LFilter-1) OF COEFF_TYPE);
 END n_bit_int;
 
 LIBRARY work;
@@ -27,16 +29,22 @@ architecture behave of tb_fir_filter_4 is
 
 	component fir_filter_4 
 	port (
-		clk    : IN  STD_LOGIC								;  -- System clock
-		reset  : IN  STD_LOGIC								;  -- Asynchron reset
-		i_data : IN  std_logic_vector( Win-1 	downto 0)	;-- System input
-		o_data : OUT std_logic_vector( Wout-1 	downto 0)	);-- System output 
+		clk     : IN  STD_LOGIC								;  -- System clock
+		reset   : IN  STD_LOGIC								;
+		i_coeff : in  ARRAY_COEFF							; 
+		i_data  : IN  std_logic_vector( Win-1 	downto 0)	;-- System input
+		o_data  : OUT std_logic_vector( Wout-1 	downto 0)	);-- System output 
 	end component;
 
 	signal clk          : std_logic:='0';
 	signal reset        : std_logic:='0';
-	signal i_data       : std_logic_vector( Win-1   downto 0);
-	signal o_data       : std_logic_vector( Wout-1  downto 0);
+	signal i_coeff 		: ARRAY_COEFF	; 
+	signal i_coeff(0)   := std_logic_vector(to_signed(-10,Win-1));
+	signal i_coeff(1)   := std_logic_vector(to_signed(110,Win-1));
+	signal i_coeff(2)   := std_logic_vector(to_signed(127,Win-1));
+	signal i_coeff(3)   := std_logic_vector(to_signed(-20,Win-1));
+	signal i_data       : std_logic_vector( Win-1  downto 0) 	 ;
+	signal o_data       : std_logic_vector( Wout-1 downto 0) 	 ;
 
 begin
 
