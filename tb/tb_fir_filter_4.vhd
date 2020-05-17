@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
 	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; 
-	TYPE ARRAY_COEFF IS ARRAY (0 TO 3) OF COEFF_TYPE;
+	TYPE ARRAY_COEFF IS ARRAY (0 TO 31) OF COEFF_TYPE;
 END n_bit_int;
 
 LIBRARY work;
@@ -17,11 +17,11 @@ entity tb_fir_filter_4 is
 	generic( 
 		Win 			: INTEGER 	:= 8		; -- Input bit width
 		Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
-		Wadd 			: INTEGER 	:= 17		;-- Adder width = Wmult+log2(L)-1
+		Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
 		Wout 			: INTEGER 	:= 10		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		LFilter  		: INTEGER 	:= 4		;-- Filter length
-		LfilterHalf		: INTEGER 	:= 2		); 
+		LFilter  		: INTEGER 	:= 32		;-- Filter length
+		LfilterHalf		: INTEGER 	:= 16		); 
 end tb_fir_filter_4;
 
 architecture behave of tb_fir_filter_4 is
@@ -44,10 +44,38 @@ architecture behave of tb_fir_filter_4 is
 
 begin
 
-	i_coeff(0)   <= std_logic_vector(to_signed(-10,Win));
-	i_coeff(1)   <= std_logic_vector(to_signed(110,Win));
-	i_coeff(2)   <= std_logic_vector(to_signed(127,Win));
-	i_coeff(3)   <= std_logic_vector(to_signed(-20,Win));
+	i_coeff(0)   <=  std_logic_vector(to_signed(0,	Win));
+	i_coeff(1)   <=  std_logic_vector(to_signed(1,	Win));
+	i_coeff(2)   <=  std_logic_vector(to_signed(2,	Win));
+	i_coeff(3)   <=  std_logic_vector(to_signed(5,	Win));
+	i_coeff(4)   <=  std_logic_vector(to_signed(9,	Win));
+	i_coeff(5)   <=  std_logic_vector(to_signed(16,	Win));
+	i_coeff(6)   <=  std_logic_vector(to_signed(25,	Win));
+	i_coeff(7)   <=  std_logic_vector(to_signed(36,	Win));
+	i_coeff(8)   <=  std_logic_vector(to_signed(48,	Win));
+	i_coeff(9)   <=  std_logic_vector(to_signed(62,	Win));
+	i_coeff(10)   <= std_logic_vector(to_signed(77,	Win));
+	i_coeff(11)   <= std_logic_vector(to_signed(92,	Win));
+	i_coeff(12)   <= std_logic_vector(to_signed(105,Win));
+	i_coeff(13)   <= std_logic_vector(to_signed(115,Win));	
+	i_coeff(14)   <= std_logic_vector(to_signed(123,Win));
+	i_coeff(15)   <= std_logic_vector(to_signed(127,Win));
+	i_coeff(16)   <= std_logic_vector(to_signed(127,Win));
+	i_coeff(17)   <= std_logic_vector(to_signed(123,Win));	
+	i_coeff(18)   <= std_logic_vector(to_signed(115,Win));
+	i_coeff(19)   <= std_logic_vector(to_signed(105,Win));
+	i_coeff(20)   <= std_logic_vector(to_signed(92,	Win));
+	i_coeff(21)   <= std_logic_vector(to_signed(77,	Win));	
+	i_coeff(22)   <= std_logic_vector(to_signed(62,	Win));
+	i_coeff(23)   <= std_logic_vector(to_signed(48,	Win));
+	i_coeff(24)   <= std_logic_vector(to_signed(36,	Win));	
+	i_coeff(25)   <= std_logic_vector(to_signed(25,	Win));
+	i_coeff(26)   <= std_logic_vector(to_signed(16,	Win));
+	i_coeff(27)   <= std_logic_vector(to_signed(9,	Win));
+	i_coeff(28)   <= std_logic_vector(to_signed(5,	Win));	
+	i_coeff(29)   <= std_logic_vector(to_signed(2,	Win));
+	i_coeff(30)   <= std_logic_vector(to_signed(1,	Win));
+	i_coeff(31)   <= std_logic_vector(to_signed(0	Win));	
 
 	clk   <= not clk after 5 ns;
 	reset  <= '0', '1' after 132 ns;

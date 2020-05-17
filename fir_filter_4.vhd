@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
 	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (0 TO 3) OF COEFF_TYPE; --LFilter-1
+	TYPE ARRAY_COEFF IS ARRAY (0 TO 31) OF COEFF_TYPE; --LFilter-1
 END n_bit_int;
 
 LIBRARY work;
@@ -13,15 +13,18 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+-- 2^5 = 32 -> log2(32) = 5
+-- 2*8 = 16 -> 16 + 5 - 1 = 22
+
 entity fir_filter_4 is
 generic( 
 	Win 			: INTEGER 	:= 8		; -- Input bit width
 	Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 17		;-- Adder width = Wmult+log2(L)-1
+	Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
 	Wout 			: INTEGER 	:= 10		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	LFilter  		: INTEGER 	:= 4		;-- Filter length
-	LFilterHalf		: INTEGER 	:= 2		); 
+	LFilter  		: INTEGER 	:= 32		;-- Filter length
+	LFilterHalf		: INTEGER 	:= 16		); 
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
