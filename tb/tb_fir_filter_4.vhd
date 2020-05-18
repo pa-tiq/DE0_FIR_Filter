@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; 
-	TYPE ARRAY_COEFF IS ARRAY (0 TO 31) OF COEFF_TYPE;
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0);
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
 END n_bit_int;
 
 LIBRARY work;
@@ -26,56 +26,40 @@ end tb_fir_filter_4;
 
 architecture behave of tb_fir_filter_4 is
 
+	type T_COEFF_INPUT is array(0 to LFilter-1) of integer range 0 to 127;	
+
+	constant coeff_array : T_COEFF_INPUT := (
+		0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,105,92,
+		77,62,48,36,25,16,9,5,2,1,0);
+
+	constant noisy_size : integer := 100;
+	type T_NOISY_INPUT is array(0 to noisy_size-1) of integer range -128 to 127;
+
+	constant noisy_array : T_NOISY_INPUT := (
+		-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
+		101,98,104,100,111,101,103,106,95,121,115,109,121,103,111,109,111,
+		110,101,104,101,103,103,100,85,87,76,73,75,80,62,64,56,59,41,42,40,
+		38,35,21,6,5,-3,11,-11,-9,-20,-19,-35,-44,-49,-43,-52,-58,-53,-64,
+		-70,-66,-84,-80,-83,-93,-93,-105,-108,-103,-102,-94,-114,-111,-114,
+		-126,-119,-127,-112,-122,-117,-120,-114);
+
 	component fir_filter_4 
 	port (
 		clk     : IN  STD_LOGIC								;  -- System clock
 		reset   : IN  STD_LOGIC								;
-		i_coeff : in  ARRAY_COEFF							; 
+		i_coeff : in  ARRAY_COEFF(0 to Lfilter-1)			; 
 		i_data  : IN  std_logic_vector( Win-1 	downto 0)	;-- System input
 		o_data  : OUT std_logic_vector( Wout-1 	downto 0)	);-- System output 
 	end component;
 
-	signal clk          : std_logic:='0';
-	signal reset        : std_logic:='0';
-	signal i_coeff 		: ARRAY_COEFF	; 
-
-	signal i_data       : std_logic_vector( Win-1  downto 0) 	 ;
-	signal o_data       : std_logic_vector( Wout-1 downto 0) 	 ;
+	signal clk      : std_logic:='0';
+	signal reset    : std_logic:='0';
+	signal i_coeff 	: ARRAY_COEFF(0 to Lfilter-1); 
+	signal i_data   : std_logic_vector( Win-1  downto 0);
+	signal o_data   : std_logic_vector( Wout-1 downto 0);
+	signal noisy	: ARRAY_COEFF(0 to noisy_size-1);
 
 begin
-
-	i_coeff(0)   <=  std_logic_vector(to_signed(0,	Win));
-	i_coeff(1)   <=  std_logic_vector(to_signed(1,	Win));
-	i_coeff(2)   <=  std_logic_vector(to_signed(2,	Win));
-	i_coeff(3)   <=  std_logic_vector(to_signed(5,	Win));
-	i_coeff(4)   <=  std_logic_vector(to_signed(9,	Win));
-	i_coeff(5)   <=  std_logic_vector(to_signed(16,	Win));
-	i_coeff(6)   <=  std_logic_vector(to_signed(25,	Win));
-	i_coeff(7)   <=  std_logic_vector(to_signed(36,	Win));
-	i_coeff(8)   <=  std_logic_vector(to_signed(48,	Win));
-	i_coeff(9)   <=  std_logic_vector(to_signed(62,	Win));
-	i_coeff(10)   <= std_logic_vector(to_signed(77,	Win));
-	i_coeff(11)   <= std_logic_vector(to_signed(92,	Win));
-	i_coeff(12)   <= std_logic_vector(to_signed(105,Win));
-	i_coeff(13)   <= std_logic_vector(to_signed(115,Win));	
-	i_coeff(14)   <= std_logic_vector(to_signed(123,Win));
-	i_coeff(15)   <= std_logic_vector(to_signed(127,Win));
-	i_coeff(16)   <= std_logic_vector(to_signed(127,Win));
-	i_coeff(17)   <= std_logic_vector(to_signed(123,Win));	
-	i_coeff(18)   <= std_logic_vector(to_signed(115,Win));
-	i_coeff(19)   <= std_logic_vector(to_signed(105,Win));
-	i_coeff(20)   <= std_logic_vector(to_signed(92,	Win));
-	i_coeff(21)   <= std_logic_vector(to_signed(77,	Win));	
-	i_coeff(22)   <= std_logic_vector(to_signed(62,	Win));
-	i_coeff(23)   <= std_logic_vector(to_signed(48,	Win));
-	i_coeff(24)   <= std_logic_vector(to_signed(36,	Win));	
-	i_coeff(25)   <= std_logic_vector(to_signed(25,	Win));
-	i_coeff(26)   <= std_logic_vector(to_signed(16,	Win));
-	i_coeff(27)   <= std_logic_vector(to_signed(9,	Win));
-	i_coeff(28)   <= std_logic_vector(to_signed(5,	Win));	
-	i_coeff(29)   <= std_logic_vector(to_signed(2,	Win));
-	i_coeff(30)   <= std_logic_vector(to_signed(1,	Win));
-	i_coeff(31)   <= std_logic_vector(to_signed(0	Win));	
 
 	clk   <= not clk after 5 ns;
 	reset  <= '0', '1' after 132 ns;
@@ -90,18 +74,34 @@ begin
 
 	p_input : process (reset,clk)
 	variable control  : unsigned(10 downto 0):= (others=>'0');
+	variable count : integer := 0;
 	begin
+		for k in 0 to Lfilter-1 loop
+			i_coeff(k)  <=  std_logic_vector(to_signed(coeff_array(k),Win));
+		end loop;	
+		
+		for k in 0 to noisy_size-1 loop
+			noisy(k)  <=  std_logic_vector(to_signed(noisy_array(k),Win));
+		end loop;
+		
 		if(reset=BUTTON_HIGH) then
 			i_data       <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			if(control=10) then  -- delta
-				i_data       <= ('0',others=>'1');
-			elsif(control(7)='1') then  -- step
-				i_data       <= ('0',others=>'1');
-			else
-				i_data       <= (others=>'0');
+		-- DELTA, STEP, STEP, STEP, .......
+		--	if(control=10) then  -- delta
+		--		i_data       <= ('0',others=>'1');
+		--	elsif(control(7)='1') then  -- step
+		--		i_data       <= ('0',others=>'1');
+		--	else
+		--		i_data       <= (others=>'0');
+		--	end if;
+		--	control := control + 1;
+		
+		-- NOISY ANALOG SIGNAL
+			if(count < 100) then
+				i_data <= noisy(count);
+				count := count + 1;
 			end if;
-			control := control + 1;
 		end if;
 	end process p_input;
 

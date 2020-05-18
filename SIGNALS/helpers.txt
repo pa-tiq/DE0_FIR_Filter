@@ -1,0 +1,8 @@
+FUNÇÕES DE AJUDA MATLAB
+
+NORMALIZAR EM UM RANGE:
+h_rescaled = (h - min(h)) * (127 - (-127))/(max(h)-min(h))-128
+output = normalize(input,'range',[-128,127])
+
+ARREDONDAR ELEMENTOS DO VETOR E ESCREVER PARA ARQUIVO:
+writematrix(round(input),'nome_do_arquivo')
