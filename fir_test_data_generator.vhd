@@ -20,81 +20,28 @@ entity fir_test_data_generator is
 		i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
 		i_start_generation      : in  std_logic;
 		o_data                  : out std_logic_vector( Win-1 downto 0); -- to FIR
-		--o_data 					: out S8i;
 		o_write_enable          : out std_logic);  -- to the output buffer
 end fir_test_data_generator;
 
 architecture rtl of fir_test_data_generator is
 
-type t_pattern_input is array(0 to 31) of integer range -128 to 127;
+--type T_PATTERN_INPUT is array(0 to 31) of integer range -128 to 127;
+type T_NOISY_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
 
-constant C_PATTERN_DELTA     : t_pattern_input := (
-	   0  ,
-	 127  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  );
+constant NOISY_ARRAY : T_NOISY_INPUT := (
+	-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
+	101,98,104,100,111,101,103,106,95,121,115,109,121,103,111,109,111,
+	110,101,104,101,103,103,100,85,87,76,73,75,80,62,64,56,59,41,42,40,
+	38,35,21,6,5,-3,11,-11,-9,-20,-19,-35,-44,-49,-43,-52,-58,-53,-64,
+	-70,-66,-84,-80,-83,-93,-93,-105,-108,-103,-102,-94,-114,-111,-114,
+	-126,-119,-127,-112,-122,-117,-120,-114);
 
-constant C_PATTERN_STEP      : t_pattern_input := (
-	   0  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	 127  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  ,
-	   0  );
+--constant C_PATTERN_DELTA : T_PATTERN_INPUT := (
+--	0,127,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+--
+--constant C_PATTERN_STEP : T_PATTERN_INPUT := (
+--	0,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,
+--	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
 component edge_detector
 port (
@@ -104,9 +51,10 @@ port (
 	o_pulse                     : out std_logic);
 end component;
 
-signal r_write_counter             : integer range 0 to PATTERN_SIZE-1; 
-signal r_write_counter_ena         : std_logic;
-signal w_start_pulse               : std_logic;
+signal r_write_counter        : integer range 0 to PATTERN_SIZE-1; 
+signal r_write_counter_ena    : std_logic;
+signal w_start_pulse          : std_logic;
+signal NOISY				  : ARRAY_COEFF(0 to PATTERN_SIZE-1);
 
 begin
 
@@ -120,36 +68,40 @@ begin
 	p_write_counter : process (i_rstb,i_clk)
 	begin
 		if(i_rstb=BUTTON_HIGH) then
-			r_write_counter             <= PATTERN_SIZE-1;
-			r_write_counter_ena         <= '0';
+			r_write_counter        <= PATTERN_SIZE-1;
+			r_write_counter_ena    <= '0';
 		elsif(rising_edge(i_clk)) then
 			if(w_start_pulse='1') then
-				r_write_counter             <= 0;
-				r_write_counter_ena         <= '1';
-			elsif(r_write_counter<PATTERN_SIZE-1) then
-				r_write_counter             <= r_write_counter + 1;
-				r_write_counter_ena         <= '1';
+				r_write_counter       <= 0;
+				r_write_counter_ena   <= '1';
+			elsif(r_write_counter < PATTERN_SIZE-1) then
+				r_write_counter       <= r_write_counter + 1;
+				r_write_counter_ena   <= '1';
 			else
-				r_write_counter_ena         <= '0';
+				r_write_counter_ena   <= '0';
 			end if;
 		end if;
 	end process p_write_counter;
 
 	p_output : process (i_rstb,i_clk)
-	begin
+		variable count : integer := 0;
+	begin		
 		if(i_rstb=BUTTON_HIGH) then
 			o_data          <= (others=>'0');
-			--o_data <= 0;
 			o_write_enable  <= '0';
 		elsif(rising_edge(i_clk)) then
 			o_write_enable  <= r_write_counter_ena;
-			if(i_pattern_sel='0') then
-				o_data     <= std_logic_vector(to_signed(C_PATTERN_DELTA(r_write_counter),Win));
-			--	o_data <= C_PATTERN_DELTA(r_write_counter);
+			if(count < PATTERN_SIZE) then
+				o_data <= NOISY(count);
+				count := count + 1;
 			else
-				o_data     <= std_logic_vector(to_signed(C_PATTERN_STEP(r_write_counter),Win));
-			--	o_data <= C_PATTERN_STEP(r_write_counter);
-			end if;		
+				o_data <= (others=>'0');
+			end if;
+			--if(i_pattern_sel='0') then
+			--	o_data     <= std_logic_vector(to_signed(C_PATTERN_DELTA(r_write_counter),Win));
+			--else
+			--	o_data     <= std_logic_vector(to_signed(C_PATTERN_STEP(r_write_counter),Win));
+			--end if;		
 		end if;
 	end process p_output;
 

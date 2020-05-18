@@ -19,8 +19,7 @@ entity fir_output_buffer is
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;
 		i_write_enable          : in  std_logic;
-		--i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR
-		i_data                  : in  S8o; -- from FIR
+		i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR
 		i_read_request          : in  std_logic;
 		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
 		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
@@ -28,7 +27,7 @@ end fir_output_buffer;
 
 architecture rtl of fir_output_buffer is
 
-	--type t_output_buffer_mem is array(0 to PATTERN_SIZE-1) of std_logic_vector( Wout-1 downto 0);
+	type t_output_buffer_mem is array(0 to PATTERN_SIZE-1) of std_logic_vector( Wout-1 downto 0);
 
 	component edge_detector
 	port (
@@ -38,8 +37,7 @@ architecture rtl of fir_output_buffer is
 		o_pulse                     : out std_logic);
 	end component;
 
-	signal output_buffer_mem           : AS8i_32 ;
-	signal op 						   : std_logic_vector( Wout-1 downto 0);
+	signal output_buffer_mem           : t_output_buffer_mem ;
 	signal r_write_add                 : integer range 0 to PATTERN_SIZE-1;
 	signal r_read_add                  : integer range 0 to PATTERN_SIZE-1;
 	signal w_read_pulse                : std_logic;
@@ -89,9 +87,7 @@ architecture rtl of fir_output_buffer is
 				if(i_write_enable='1') then
 					output_buffer_mem(r_write_add) <= i_data;
 				end if;
-				--o_data <= output_buffer_mem(r_read_add);
-				op <= std_logic_vector(to_signed(output_buffer_mem(r_read_add),Wout));
-				o_data <= op;
+				o_data <= output_buffer_mem(r_read_add);
 			end if;
 	end process p_memory;
 

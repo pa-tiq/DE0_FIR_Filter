@@ -20,22 +20,20 @@ entity tb_fir_filter_4 is
 		Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
 		Wout 			: INTEGER 	:= 10		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		LFilter  		: INTEGER 	:= 32		;-- Filter length
-		LfilterHalf		: INTEGER 	:= 16		); 
+		LFilter  		: INTEGER 	:= 32		);-- Filter length
 end tb_fir_filter_4;
 
 architecture behave of tb_fir_filter_4 is
 
+	constant noisy_size : integer := 100;
 	type T_COEFF_INPUT is array(0 to LFilter-1) of integer range 0 to 127;	
+	type T_NOISY_INPUT is array(0 to noisy_size-1) of integer range -128 to 127;
 
-	constant coeff_array : T_COEFF_INPUT := (
+	constant COEFF_ARRAY : T_COEFF_INPUT := (
 		0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,105,92,
 		77,62,48,36,25,16,9,5,2,1,0);
 
-	constant noisy_size : integer := 100;
-	type T_NOISY_INPUT is array(0 to noisy_size-1) of integer range -128 to 127;
-
-	constant noisy_array : T_NOISY_INPUT := (
+	constant NOISY_ARRAY : T_NOISY_INPUT := (
 		-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
 		101,98,104,100,111,101,103,106,95,121,115,109,121,103,111,109,111,
 		110,101,104,101,103,103,100,85,87,76,73,75,80,62,64,56,59,41,42,40,
@@ -57,7 +55,7 @@ architecture behave of tb_fir_filter_4 is
 	signal i_coeff 	: ARRAY_COEFF(0 to Lfilter-1); 
 	signal i_data   : std_logic_vector( Win-1  downto 0);
 	signal o_data   : std_logic_vector( Wout-1 downto 0);
-	signal noisy	: ARRAY_COEFF(0 to noisy_size-1);
+	signal NOISY	: ARRAY_COEFF(0 to noisy_size-1);
 
 begin
 
@@ -73,20 +71,24 @@ begin
 		o_data      => o_data     );
 
 	p_input : process (reset,clk)
-	variable control  : unsigned(10 downto 0):= (others=>'0');
-	variable count : integer := 0;
+		variable control  	: unsigned(10 downto 0):= (others=>'0');
+		variable count 		: integer := 0;
+		variable first_time : std_logic := '0';
 	begin
-		for k in 0 to Lfilter-1 loop
-			i_coeff(k)  <=  std_logic_vector(to_signed(coeff_array(k),Win));
-		end loop;	
-		
-		for k in 0 to noisy_size-1 loop
-			noisy(k)  <=  std_logic_vector(to_signed(noisy_array(k),Win));
-		end loop;
+		if(first_time='0') then
+			for k in 0 to Lfilter-1 loop
+				i_coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
+			end loop;			
+			for k in 0 to noisy_size-1 loop
+				NOISY(k)  <=  std_logic_vector(to_signed(NOISY_ARRAY(k),Win));
+			end loop;
+			first_time := '1';
+		end if;
 		
 		if(reset=BUTTON_HIGH) then
 			i_data       <= (others=>'0');
 		elsif(rising_edge(clk)) then
+			
 		-- DELTA, STEP, STEP, STEP, .......
 		--	if(control=10) then  -- delta
 		--		i_data       <= ('0',others=>'1');
@@ -98,10 +100,13 @@ begin
 		--	control := control + 1;
 		
 		-- NOISY ANALOG SIGNAL
-			if(count < 100) then
-				i_data <= noisy(count);
+			if(count < noisy_size) then
+				i_data <= NOISY(count);
 				count := count + 1;
+			else
+				i_data <= (others=>'0');
 			end if;
+			
 		end if;
 	end process p_input;
 

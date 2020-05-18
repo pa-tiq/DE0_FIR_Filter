@@ -1,11 +1,13 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+--UNCOMMENT IF TESTING FILTER INDEPENDENTLY
+--library ieee;
+--use ieee.std_logic_1164.all;
+--use ieee.numeric_std.all;
+--
+--PACKAGE n_bit_int IS
+--	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
+--	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+--END n_bit_int;
 
-PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
-END n_bit_int;
 
 LIBRARY work;
 USE work.n_bit_int.ALL;
@@ -23,8 +25,7 @@ generic(
 	Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
 	Wout 			: INTEGER 	:= 10		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	LFilter  		: INTEGER 	:= 32		;-- Filter length
-	LFilterHalf		: INTEGER 	:= 16		); 
+	LFilter  		: INTEGER 	:= 32		); -- Filter length
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
@@ -37,7 +38,7 @@ architecture rtl of fir_filter_4 is
 
 type t_data    is array (0 to Lfilter-1) 	 of signed(Win-1   downto 0);
 type t_mult    is array (0 to Lfilter-1) 	 of signed(Wmult-1 downto 0);
-type t_add_st0 is array (0 to LFilterHalf-1) of signed(Wadd-1  downto 0);
+type t_add_st0 is array (0 to (LFilter/2)-1) of signed(Wadd-1  downto 0);
 
 signal coeff     : t_data				;
 signal data      : t_data				;
@@ -57,11 +58,6 @@ begin
 			for k in 0 to Lfilter-1 loop
 				coeff(k)  <= signed(i_coeff(k));
 			end loop;				  
-			--output = to_signed(input, output'length);
-			--coeff(0)  <= to_signed(-10,Win);
-			--coeff(1)  <= to_signed(110,Win);
-			--coeff(2)  <= to_signed(127,Win);
-			--coeff(3)  <= to_signed(-20,Win);
 		end if;
 	end process p_input;
 
@@ -81,7 +77,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			add_st0 <= (others=>(others=>'0'));
 		elsif(rising_edge(clk)) then
-			for k in 0 to LFilterHalf-1 loop
+			for k in 0 to (LFilter/2)-1 loop
 				add_st0(k) <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
 				-- add0(0) <= mult(0) + mult(1)
 				-- add0(1) <= mult(2) + mult(3)
@@ -97,7 +93,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			add_st1  <= (others=>'0');
 		elsif(rising_edge(clk)) then			
-			for k in 0 to LFilterHalf-1 loop
+			for k in 0 to (LFilter/2)-1 loop
 				add_temp := resize(add_st0(k),Wadd+1) + add_temp;
 			end loop;
 			add_st1 <= add_temp;					
@@ -109,88 +105,9 @@ begin
 		if(reset=BUTTON_HIGH) then
 			o_data  <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-9))); --divide by 128, i.e. shift right 7 bits			
+			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-9)));
+			--divide by 128 = shift right 7 bits (2^7=128)			
 		end if;
 	end process p_output;
 
 end rtl;
-
---    0.0028
---	  0.0084
---   -0.0079
---   -0.0044
---    0.0111
---   -0.0017
---   -0.0109
---    0.0083
---    0.0070
---   -0.0131
---    0.0001
---    0.0144
---   -0.0086
---   -0.0108
---    0.0160
---    0.0026
---   -0.0196
---    0.0089
---    0.0170
---   -0.0206
---   -0.0074
---    0.0289
---   -0.0090
---   -0.0297
---    0.0301
---    0.0188
---   -0.0525
---    0.0091
---    0.0723
---   -0.0695
---   -0.0860
---    0.3054
---    0.5908
---    0.3054
---   -0.0860
---   -0.0695
---    0.0723
---    0.0091
---   -0.0525
---    0.0188
---    0.0301
---   -0.0297
---   -0.0090
---    0.0289
---   -0.0074
---   -0.0206
---    0.0170
---    0.0089
---   -0.0196
---    0.0026
---    0.0160
---   -0.0108
---   -0.0086
---    0.0144
---    0.0001
---   -0.0131
---    0.0070
---    0.0083
---   -0.0109
---   -0.0017
---    0.0111
---   -0.0044
---   -0.0079
---    0.0084
---    0.0028
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		

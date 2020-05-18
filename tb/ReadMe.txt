@@ -7,8 +7,6 @@ Run script from menu
 
 Tool->TCL-> Execute Macro...
 
-and select "sim_fir_filter_4.do"
+select "sim_fir_filter_4.do"
 
 run 20 us
-
-You will see the simulation of delta and step response

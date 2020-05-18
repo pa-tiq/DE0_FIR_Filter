@@ -2,16 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
---PACKAGE n_bit_int IS    -- User defined types
---	SUBTYPE S8i IS INTEGER RANGE -128 TO 127;
---	SUBTYPE S8o IS INTEGER RANGE -512 TO 511;
---	TYPE AS8 IS ARRAY (0 TO 3) OF S8;
---	TYPE AS8_32 IS ARRAY (0 TO 31) OF S8;
---END n_bit_int;
-
 PACKAGE n_bit_int IS
 	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (0 TO 3) OF COEFF_TYPE; --LFilter-1
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
 END n_bit_int;
 
 LIBRARY work;
@@ -22,15 +15,15 @@ use ieee.numeric_std.all;
 
 entity DE0_FIR_Filter is
 generic( 
-	Win 			: INTEGER 	:= 7		; -- Input bit width
-	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 9		;-- Output bit width
+	Win 			: INTEGER 	:= 8		; -- Input bit width
+	Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 10		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	PATTERN_SIZE	: INTEGER 	:= 32		;
+	PATTERN_SIZE	: INTEGER 	:= 100		;
 	RANGE_LOW 		: INTEGER 	:= -128		; --pattern range: power of 2
 	RANGE_HIGH 		: INTEGER 	:= 127		; --must change pattern too
-	LFilter  		: INTEGER 	:= 513		); -- Filter length
+	LFilter  		: INTEGER 	:= 32		); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
 	pad_i_clock_50                             : in    std_logic;  --	50 MHz
@@ -140,8 +133,8 @@ generic(
 	BUTTON_HIGH : STD_LOGIC ;
 	PATTERN_SIZE: INTEGER   );
 port (
-	i_clk                   : in  std_logic;
-	i_rstb                  : in  std_logic;
+	clk                     : in  std_logic;
+	reset                   : in  std_logic;
 	i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
 	i_start_generation      : in  std_logic;
 	i_read_request          : in  std_logic;
@@ -223,8 +216,8 @@ generic map(
 	BUTTON_HIGH => BUTTON_HIGH	,
 	PATTERN_SIZE=> PATTERN_SIZE )
 port map(
-	i_clk                   => w_clk                   ,
-	i_rstb                  => w_rstb                  ,
+	clk                 	=> w_clk                   ,
+	reset                   => w_rstb                  ,
 	i_pattern_sel           => w_pattern_sel           ,
 	i_start_generation      => w_start_generation      ,
 	i_read_request          => w_read_request          ,
