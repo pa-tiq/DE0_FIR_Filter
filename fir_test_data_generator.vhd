@@ -28,7 +28,7 @@ architecture rtl of fir_test_data_generator is
 --type T_PATTERN_INPUT is array(0 to 31) of integer range -128 to 127;
 type T_NOISY_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
 
-constant NOISY_ARRAY : T_NOISY_INPUT := (
+constant NOISY_SIGNAL : T_NOISY_INPUT := (
 	-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
 	101,98,104,100,111,101,103,106,95,121,115,109,121,103,111,109,111,
 	110,101,104,101,103,103,100,85,87,76,73,75,80,62,64,56,59,41,42,40,
@@ -54,7 +54,6 @@ end component;
 signal r_write_counter        : integer range 0 to PATTERN_SIZE-1; 
 signal r_write_counter_ena    : std_logic;
 signal w_start_pulse          : std_logic;
-signal NOISY				  : ARRAY_COEFF(0 to PATTERN_SIZE-1);
 
 begin
 
@@ -84,19 +83,13 @@ begin
 	end process p_write_counter;
 
 	p_output : process (i_rstb,i_clk)
-		variable count : integer := 0;
 	begin		
 		if(i_rstb=BUTTON_HIGH) then
 			o_data          <= (others=>'0');
 			o_write_enable  <= '0';
 		elsif(rising_edge(i_clk)) then
 			o_write_enable  <= r_write_counter_ena;
-			if(count < PATTERN_SIZE) then
-				o_data <= NOISY(count);
-				count := count + 1;
-			else
-				o_data <= (others=>'0');
-			end if;
+			o_data <= std_logic_vector(to_signed(NOISY_SIGNAL(r_write_counter),Win));
 			--if(i_pattern_sel='0') then
 			--	o_data     <= std_logic_vector(to_signed(C_PATTERN_DELTA(r_write_counter),Win));
 			--else
