@@ -5,16 +5,16 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity fir_filter_test is
-	generic(
-		Win 		: INTEGER	; -- Input bit width
-		Wmult 		: INTEGER	;-- Multiplier bit width 2*W1
-		Wadd 		: INTEGER	;-- Adder width = Wmult+log2(L)-1
-		Wout 		: INTEGER	;-- Output bit width
-		Lfilter 	: INTEGER	; --Filter Length
-		RANGE_LOW 	: INTEGER	; --coeff range: power of 2
-		RANGE_HIGH 	: INTEGER	;
-		BUTTON_HIGH : STD_LOGIC ;
-		PATTERN_SIZE: INTEGER   );
+	generic(  
+		Win 		: INTEGER 	:= 8	; -- Input bit width
+		Wmult 		: INTEGER 	:= 16	;-- Multiplier bit width 2*W1
+		Wadd 		: INTEGER 	:= 20	;-- Adder width = Wmult+log2(L)-1
+		Wout 		: INTEGER 	:= 10	;-- Output bit width
+		Lfilter 	: INTEGER 	:= 32	; --Filter Length
+		RANGE_LOW 	: INTEGER 	:= -128 ; --coeff range: power of 2
+		RANGE_HIGH 	: INTEGER 	:= 127  ;
+		BUTTON_HIGH : STD_LOGIC := '0'	;
+		PATTERN_SIZE: INTEGER   := 32 	);
 	port (
 		clk                  	: in  std_logic;
 		reset                   : in  std_logic;
@@ -27,11 +27,16 @@ end fir_filter_test;
 
 architecture rtl of fir_filter_test is
 
-	type T_COEFF_INPUT is array(0 to LFilter-1) of integer range 0 to 127;
+	type T_COEFF_INPUT is array(0 to LFilter-1) of integer range -128 to 127;
 
+	--constant COEFF_ARRAY : T_COEFF_INPUT := (
+	--0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,
+	--105,92,77,62,48,36,25,16,9,5,2,1,0);
+
+	--SINC FILTER:
 	constant COEFF_ARRAY : T_COEFF_INPUT := (
-	0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,105,92,
-	77,62,48,36,25,16,9,5,2,1,0);
+	0,-8,-12,-8,1,12,16,11,-4,-20,-28,-17,13,56,98,124,124,98,56,
+	13,-17,-28,-20,-4,11,16,12,1,-8,-12,-8,0);
 	
 	component fir_test_data_generator
 	generic( 

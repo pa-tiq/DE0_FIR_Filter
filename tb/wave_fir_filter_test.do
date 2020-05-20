@@ -1,7 +1,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate -format Logic /tb_fir_filter_test/i_clk
-add wave -noupdate -format Logic /tb_fir_filter_test/i_rstb
+add wave -noupdate -format Logic /tb_fir_filter_test/clk
+add wave -noupdate -format Logic /tb_fir_filter_test/reset
 add wave -noupdate -format Logic /tb_fir_filter_test/i_pattern_sel
 add wave -noupdate -format Logic /tb_fir_filter_test/i_start_generation
 add wave -noupdate -format Logic /tb_fir_filter_test/i_read_request
@@ -10,8 +10,8 @@ add wave -noupdate -format Literal -radix unsigned /tb_fir_filter_test/o_test_ad
 add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/o_test_add(4)
 TreeUpdate [SetDefaultTree]
 quietly WaveActivateNextPane
-add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/i_clk
-add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/i_rstb
+add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/clk
+add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/reset
 add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/i_pattern_sel
 add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/i_start_generation
 add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filter_test/i_read_request

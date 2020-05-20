@@ -1,3 +1,14 @@
+--UNCOMMENT IF TESTING FILE INDEPENDENTLY
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+END n_bit_int;
+-- ------------------------------------------
+
 LIBRARY work;
 USE work.n_bit_int.ALL;
 
@@ -8,13 +19,13 @@ use ieee.numeric_std.all;
 
 entity fir_output_buffer is
 	generic( 
-		Win 		: INTEGER	; -- Input bit width
-		Wout 		: INTEGER	;-- Output bit width
-		BUTTON_HIGH : STD_LOGIC	;
-		PATTERN_SIZE: INTEGER	;
-		RANGE_LOW	: INTEGER 	; 
-		RANGE_HIGH 	: INTEGER 	;
-		LFilter  	: INTEGER	); -- Filter length
+		Win 		: INTEGER	:= 8	; -- Input bit width
+		Wout 		: INTEGER	:= 10	;-- Output bit width
+		BUTTON_HIGH : STD_LOGIC	:= '0'	;
+		PATTERN_SIZE: INTEGER	:= 32	;
+		RANGE_LOW	: INTEGER 	:= -128 ; 
+		RANGE_HIGH 	: INTEGER 	:= 127	;
+		LFilter  	: INTEGER	:= 32	); -- Filter length
 	port (
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;
@@ -46,10 +57,10 @@ architecture rtl of fir_output_buffer is
 
 	u_edge_detector : edge_detector
 	port map(
-		i_clk                       => i_clk                       ,
-		i_rstb                      => i_rstb                      ,
-		i_input                     => i_read_request              ,
-		o_pulse                     => w_read_pulse                );
+		i_clk      => i_clk             ,
+		i_rstb     => i_rstb            ,
+		i_input    => i_read_request    ,
+		o_pulse    => w_read_pulse      );
 
 	p_write_counter : process (i_rstb,i_clk)
 		begin

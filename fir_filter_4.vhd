@@ -7,10 +7,11 @@
 --	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
 --	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
 --END n_bit_int;
-
+-- ----------------------------------------
 
 LIBRARY work;
 USE work.n_bit_int.ALL;
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;

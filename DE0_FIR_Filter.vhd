@@ -20,7 +20,7 @@ generic(
 	Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
 	Wout 			: INTEGER 	:= 10		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	PATTERN_SIZE	: INTEGER 	:= 100		;
+	PATTERN_SIZE	: INTEGER 	:= 32		;
 	RANGE_LOW 		: INTEGER 	:= -128		; --pattern range: power of 2
 	RANGE_HIGH 		: INTEGER 	:= 127		; --must change pattern too
 	LFilter  		: INTEGER 	:= 32		); -- Filter length

@@ -25,23 +25,23 @@ end fir_test_data_generator;
 
 architecture rtl of fir_test_data_generator is
 
---type T_PATTERN_INPUT is array(0 to 31) of integer range -128 to 127;
-type T_NOISY_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
+type T_PATTERN_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
+--type T_NOISY_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
 
-constant NOISY_SIGNAL : T_NOISY_INPUT := (
-	-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
-	101,98,104,100,111,101,103,106,95,121,115,109,121,103,111,109,111,
-	110,101,104,101,103,103,100,85,87,76,73,75,80,62,64,56,59,41,42,40,
-	38,35,21,6,5,-3,11,-11,-9,-20,-19,-35,-44,-49,-43,-52,-58,-53,-64,
-	-70,-66,-84,-80,-83,-93,-93,-105,-108,-103,-102,-94,-114,-111,-114,
-	-126,-119,-127,-112,-122,-117,-120,-114);
+--constant NOISY_SIGNAL : T_NOISY_INPUT := (
+--	-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
+--	101,98,104,100,111,101,103,106,95,121,115,109,121,103,111,109,111,
+--	110,101,104,101,103,103,100,85,87,76,73,75,80,62,64,56,59,41,42,40,
+--	38,35,21,6,5,-3,11,-11,-9,-20,-19,-35,-44,-49,-43,-52,-58,-53,-64,
+--	-70,-66,-84,-80,-83,-93,-93,-105,-108,-103,-102,-94,-114,-111,-114,
+--	-126,-119,-127,-112,-122,-117,-120,-114);
 
---constant C_PATTERN_DELTA : T_PATTERN_INPUT := (
---	0,127,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
---
---constant C_PATTERN_STEP : T_PATTERN_INPUT := (
---	0,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,
---	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+constant C_PATTERN_DELTA : T_PATTERN_INPUT := (
+	0,127,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+
+constant C_PATTERN_STEP : T_PATTERN_INPUT := (
+	0,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
 component edge_detector
 port (
@@ -89,12 +89,16 @@ begin
 			o_write_enable  <= '0';
 		elsif(rising_edge(i_clk)) then
 			o_write_enable  <= r_write_counter_ena;
-			o_data <= std_logic_vector(to_signed(NOISY_SIGNAL(r_write_counter),Win));
-			--if(i_pattern_sel='0') then
-			--	o_data     <= std_logic_vector(to_signed(C_PATTERN_DELTA(r_write_counter),Win));
-			--else
-			--	o_data     <= std_logic_vector(to_signed(C_PATTERN_STEP(r_write_counter),Win));
-			--end if;		
+
+			-- NOISY SIGNAL
+			--o_data <= std_logic_vector(to_signed(NOISY_SIGNAL(r_write_counter),Win));
+			
+			-- DELTA & STEP
+			if(i_pattern_sel='0') then
+				o_data     <= std_logic_vector(to_signed(C_PATTERN_DELTA(r_write_counter),Win));
+			else
+				o_data     <= std_logic_vector(to_signed(C_PATTERN_STEP(r_write_counter),Win));
+			end if;		
 		end if;
 	end process p_output;
 

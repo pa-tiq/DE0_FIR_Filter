@@ -12,3 +12,8 @@ L = 10; %sei lá
 n = (1:L)';
 a = 2*fc * sinc(2*fc*(n-L/2))
 [h,z] = freqz(a,1,1000)
+
+t = linspace(-4,4,32);
+yy = sinc(t);
+plot(t,yy);
+xlabel('Time (sec)');ylabel('Amplitude'); title('Sinc Function')

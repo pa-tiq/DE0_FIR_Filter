@@ -4,15 +4,15 @@ use ieee.std_logic_1164.all;
 
 entity edge_detector is
 port (
-	i_clk                       : in  std_logic;
-	i_rstb                      : in  std_logic;
-	i_input                     : in  std_logic;
-	o_pulse                     : out std_logic);
+	i_clk     : in  std_logic;
+	i_rstb    : in  std_logic;
+	i_input   : in  std_logic;
+	o_pulse   : out std_logic);
 end edge_detector;
 
 architecture rtl of edge_detector is
-signal r0_input                           : std_logic;
-signal r1_input                           : std_logic;
+signal r0_input    : std_logic;
+signal r1_input    : std_logic;
 
 begin
 
