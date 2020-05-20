@@ -191,7 +191,7 @@ port map(
 -- SEVEN SEGMENT
 w_h0_in                    <= data_buffer(3 downto 0);
 w_h1_in                    <= data_buffer(7 downto 4);
-w_h2_in                    <= "000"&data_buffer(8);
+w_h2_in                    <= "00"&data_buffer(9 downto 8);
 w_h3_in                    <= w_test_add(3 downto 0);
 
 pad_o_hex0_dp              <= '0';
