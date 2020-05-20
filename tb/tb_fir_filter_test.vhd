@@ -28,9 +28,9 @@ port (
 	o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
 end component;
 
-signal clk                   : std_logic:='0';
-signal reset                  : std_logic;
-signal i_pattern_sel           : std_logic:='0';  -- '0'=> delta; '1'=> step
+signal clk                     : std_logic:='0';
+signal reset                   : std_logic;
+signal i_pattern_sel           : std_logic:='1';  -- '0'=> delta; '1'=> step
 signal i_start_generation      : std_logic;
 signal i_read_request          : std_logic;
 signal o_data_buffer           : std_logic_vector( Wout-1 downto 0); -- to seven segment

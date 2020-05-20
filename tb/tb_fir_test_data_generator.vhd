@@ -35,7 +35,7 @@ signal i_rstb                  : std_logic;
 signal i_pattern_sel           : std_logic;  -- '0'=> delta; '1'=> step
 signal i_start_generation      : std_logic;
 -- data input
-signal o_data                  : std_logic_vector( 7 downto 0); -- to FIR 
+signal o_data                  : std_logic_vector( Win-1 downto 0); -- to FIR 
 -- filtered data 
 signal o_write_enable          : std_logic;  -- to the output buffer
 

@@ -7,13 +7,13 @@ use ieee.numeric_std.all;
 
 entity fir_test_data_generator is
 	generic( 
-		Win 		: INTEGER	; -- Input bit width
-		Wout 		: INTEGER	; -- Output bit width
-		BUTTON_HIGH : STD_LOGIC	;
-		PATTERN_SIZE: INTEGER	;
-		RANGE_LOW	: INTEGER 	; 
-		RANGE_HIGH 	: INTEGER 	;
-		LFilter  	: INTEGER	); -- Filter length
+		Win 		: INTEGER	:= 8	; -- Input bit width
+		Wout 		: INTEGER	:= 10	;-- Output bit width
+		BUTTON_HIGH : STD_LOGIC	:= '0'	;
+		PATTERN_SIZE: INTEGER	:= 32	;
+		RANGE_LOW	: INTEGER 	:= -128 ; 
+		RANGE_HIGH 	: INTEGER 	:= 127	;
+		LFilter  	: INTEGER	:= 32	); -- Filter length
 	port (
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;
