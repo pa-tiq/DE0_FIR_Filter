@@ -26,12 +26,16 @@ end tb_fir_filter_4;
 architecture behave of tb_fir_filter_4 is
 
 	constant noisy_size : integer := 100;
-	type T_COEFF_INPUT is array(0 to LFilter-1) of integer range 0 to 127;	
+	type T_COEFF_INPUT is array(0 to LFilter-1) of integer range -128 to 127;	
 	type T_NOISY_INPUT is array(0 to noisy_size-1) of integer range -128 to 127;
 
+	--constant COEFF_ARRAY : T_COEFF_INPUT := (
+	--	0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,105,92,
+	--	77,62,48,36,25,16,9,5,2,1,0);
+
 	constant COEFF_ARRAY : T_COEFF_INPUT := (
-		0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,105,92,
-		77,62,48,36,25,16,9,5,2,1,0);
+		0,-8,-12,-8,1,12,16,11,-4,-20,-28,-17,13,56,98,124,124,98,56,13,-17,
+		-28,-20,-4,11,16,12,1,-8,-12,-8,0);
 
 	constant NOISY_ARRAY : T_NOISY_INPUT := (
 		-10,1,11,35,36,18,49,41,42,51,51,56,70,75,79,79,72,87,96,93,100,
@@ -90,22 +94,22 @@ begin
 		elsif(rising_edge(clk)) then
 			
 		-- DELTA, STEP, STEP, STEP, .......
-		--	if(control=10) then  -- delta
-		--		i_data       <= ('0',others=>'1');
-		--	elsif(control(7)='1') then  -- step
-		--		i_data       <= ('0',others=>'1');
-		--	else
-		--		i_data       <= (others=>'0');
-		--	end if;
-		--	control := control + 1;
+			if(control=10) then  -- delta
+				i_data       <= ('0',others=>'1');
+			elsif(control(7)='1') then  -- step
+				i_data       <= ('0',others=>'1');
+			else
+				i_data       <= (others=>'0');
+			end if;
+			control := control + 1;
 		
 		-- NOISY ANALOG SIGNAL
-			if(count < noisy_size) then
-				i_data <= NOISY(count);
-				count := count + 1;
-			else
-				i_data <= (others=>'0');
-			end if;
+		--	if(count < noisy_size) then
+		--		i_data <= NOISY(count);
+		--		count := count + 1;
+		--	else
+		--		i_data <= (others=>'0');
+		--	end if;
 			
 		end if;
 	end process p_input;

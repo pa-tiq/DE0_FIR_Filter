@@ -8,7 +8,7 @@ use ieee.numeric_std.all;
 entity fir_test_data_generator is
 	generic( 
 		Win 		: INTEGER	; -- Input bit width
-		Wout 		: INTEGER	;-- Output bit width
+		Wout 		: INTEGER	; -- Output bit width
 		BUTTON_HIGH : STD_LOGIC	;
 		PATTERN_SIZE: INTEGER	;
 		RANGE_LOW	: INTEGER 	; 

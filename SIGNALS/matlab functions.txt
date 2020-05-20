@@ -6,3 +6,9 @@ output = normalize(input,'range',[-128,127])
 
 ARREDONDAR ELEMENTOS DO VETOR E ESCREVER PARA ARQUIVO:
 writematrix(round(input),'nome_do_arquivo')
+
+fc = 0.01; %controla o comprimento
+L = 10; %sei lá
+n = (1:L)';
+a = 2*fc * sinc(2*fc*(n-L/2))
+[h,z] = freqz(a,1,1000)
