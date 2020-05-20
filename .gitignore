@@ -52,6 +52,7 @@
 *.tcl
 *.txt # Explicitly add any text files used
 *~
+*.asv
 *example*
 *sopc_*
 # *.sdc # I want those timing files
