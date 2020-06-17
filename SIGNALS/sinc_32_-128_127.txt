@@ -2,4 +2,75 @@
 
 
 0,-8,-12,-8,1,12,16,11,-4,-20,-28,-17,13,56,98,124,124,98,56,13,-17,-28,-20,-4,11,16,12,1,-8,-12,-8,
-0
+0
+
+
+
+
+	coeff(0)  := std_logic_vector(to_signed(COEFF_ARRAY(0) ,Win));
+	coeff(1)  := std_logic_vector(to_signed(COEFF_ARRAY(1) ,Win));
+	coeff(2)  := std_logic_vector(to_signed(COEFF_ARRAY(2) ,Win));
+	coeff(3)  := std_logic_vector(to_signed(COEFF_ARRAY(3) ,Win));
+	coeff(4)  := std_logic_vector(to_signed(COEFF_ARRAY(4) ,Win));
+	coeff(5)  := std_logic_vector(to_signed(COEFF_ARRAY(5) ,Win));	
+	coeff(6)  := std_logic_vector(to_signed(COEFF_ARRAY(6) ,Win));
+	coeff(7)  := std_logic_vector(to_signed(COEFF_ARRAY(7) ,Win));
+	coeff(8)  := std_logic_vector(to_signed(COEFF_ARRAY(8) ,Win));
+	coeff(9)  := std_logic_vector(to_signed(COEFF_ARRAY(9) ,Win));
+	coeff(10) := std_logic_vector(to_signed(COEFF_ARRAY(10),Win));	
+	coeff(11) := std_logic_vector(to_signed(COEFF_ARRAY(11),Win));
+	coeff(12) := std_logic_vector(to_signed(COEFF_ARRAY(12),Win));
+	coeff(13) := std_logic_vector(to_signed(COEFF_ARRAY(13),Win));
+	coeff(14) := std_logic_vector(to_signed(COEFF_ARRAY(14),Win));
+	coeff(15) := std_logic_vector(to_signed(COEFF_ARRAY(15),Win));
+	coeff(16) := std_logic_vector(to_signed(COEFF_ARRAY(16),Win));	
+	coeff(17) := std_logic_vector(to_signed(COEFF_ARRAY(17),Win));
+	coeff(18) := std_logic_vector(to_signed(COEFF_ARRAY(18),Win));
+	coeff(19) := std_logic_vector(to_signed(COEFF_ARRAY(19),Win));
+	coeff(20) := std_logic_vector(to_signed(COEFF_ARRAY(20),Win));
+	coeff(21) := std_logic_vector(to_signed(COEFF_ARRAY(21),Win));
+	coeff(22) := std_logic_vector(to_signed(COEFF_ARRAY(22),Win));
+	coeff(23) := std_logic_vector(to_signed(COEFF_ARRAY(23),Win));
+	coeff(24) := std_logic_vector(to_signed(COEFF_ARRAY(24),Win));
+	coeff(25) := std_logic_vector(to_signed(COEFF_ARRAY(25),Win));
+	coeff(26) := std_logic_vector(to_signed(COEFF_ARRAY(26),Win));	
+	coeff(27) := std_logic_vector(to_signed(COEFF_ARRAY(27),Win));
+	coeff(28) := std_logic_vector(to_signed(COEFF_ARRAY(28),Win));
+	coeff(29) := std_logic_vector(to_signed(COEFF_ARRAY(29),Win));
+	coeff(30) := std_logic_vector(to_signed(COEFF_ARRAY(30),Win));
+	coeff(31) := std_logic_vector(to_signed(COEFF_ARRAY(31),Win));
+	coeff(31) := std_logic_vector(to_signed(COEFF_ARRAY(31),Win));
+
+	constant coeff : ARRAY_COEFF(0 to Lfilter-1) := (
+	std_logic_vector(to_signed(COEFF_ARRAY(0) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(1) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(2) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(3) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(4) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(5) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(6) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(7) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(8) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(9) ,Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(10),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(11),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(12),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(13),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(14),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(15),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(16),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(17),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(18),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(19),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(20),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(21),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(22),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(23),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(24),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(25),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(26),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(27),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(28),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(29),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(30),Win)),
+	std_logic_vector(to_signed(COEFF_ARRAY(31),Win)));

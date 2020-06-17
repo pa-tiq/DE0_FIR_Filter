@@ -25,7 +25,7 @@ end fir_test_data_generator;
 
 architecture rtl of fir_test_data_generator is
 
-type T_PATTERN_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
+type T_PATTERN_INPUT is array(0 to PATTERN_SIZE-1) of integer range RANGE_LOW to RANGE_HIGH;
 --type T_NOISY_INPUT is array(0 to PATTERN_SIZE-1) of integer range -128 to 127;
 
 --constant NOISY_SIGNAL : T_NOISY_INPUT := (

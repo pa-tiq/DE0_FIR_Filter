@@ -16,13 +16,13 @@ entity fir_filter_test is
 		BUTTON_HIGH : STD_LOGIC := '0'	;
 		PATTERN_SIZE: INTEGER   := 32 	);
 	port (
-		clk                  	: in  std_logic;
-		reset                   : in  std_logic;
-		i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
-		i_start_generation      : in  std_logic;
-		i_read_request          : in  std_logic;
-		o_data_buffer           : out std_logic_vector( Wout-1 downto 0); -- to seven segment
-		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
+		clk              	  : in  std_logic;
+		reset                 : in  std_logic;
+		i_pattern_sel         : in  std_logic;  -- '0'=> delta; '1'=> step
+		i_start_generation    : in  std_logic;
+		i_read_request        : in  std_logic;
+		o_data_buffer         : out std_logic_vector( Wout-1 downto 0); -- to seven segment
+		o_test_add            : out std_logic_vector( 4 downto 0)); -- test read address
 end fir_filter_test;
 
 architecture rtl of fir_filter_test is
@@ -96,7 +96,36 @@ architecture rtl of fir_filter_test is
 	signal coeff           : ARRAY_COEFF(0 to Lfilter-1);
 	signal w_data_filter   : std_logic_vector( Wout-1 downto 0);
 
+	type state_type is(init_load_coeff,continue);
+	signal state, next_state	: state_type;
+
 begin
+
+	process(clk)
+	begin
+		if rising_edge(clk) then
+			if (reset = BUTTON_HIGH) then
+				state <= ST_RESET;
+			else
+				state <= next_state;
+			end if;
+		end if;
+	end process;
+
+	process(State, IsStartup)
+	begin
+		NextState <= State;
+
+		case State is
+			when ST_RESET =>
+			if (IsStartup = '1') then
+				NextState <= ST_STARTUP;
+			else
+				NextState <= ST_IDLE;
+			end if;
+		-- ...
+		end case;
+	end process;
 
 	p_coeff : process (reset,clk)
 		variable first_time : std_logic := '0';

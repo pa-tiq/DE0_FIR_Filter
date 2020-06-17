@@ -19,8 +19,8 @@ architecture behave of tb_fir_filter_test is
 
 component fir_filter_test 
 port (
-	clk                   : in  std_logic;
-	reset                  : in  std_logic;
+	clk                   	: in  std_logic;
+	reset                  	: in  std_logic;
 	i_pattern_sel           : in  std_logic;  -- '0'=> delta; '1'=> step
 	i_start_generation      : in  std_logic;
 	i_read_request          : in  std_logic;
@@ -53,8 +53,8 @@ u_fir_filter_test : fir_filter_test
 --	BUTTON_HIGH  => BUTTON_HIGH	 ,
 --	PATTERN_SIZE => PATTERN_SIZE )
 port map(
-	clk              	 => clk                ,
-	reset                => reset               ,
+	clk              	 => clk                  ,
+	reset                => reset                ,
 	i_pattern_sel        => i_pattern_sel        ,
 	i_start_generation   => i_start_generation   ,
 	i_read_request       => i_read_request       ,

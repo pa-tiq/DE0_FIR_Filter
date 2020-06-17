@@ -20,7 +20,7 @@ use ieee.numeric_std.all;
 -- 2*8 = 16 -> 16 + 5 - 1 = 22
 
 entity fir_filter_4 is
-generic( 
+generic ( 
 	Win 			: INTEGER 	:= 8		; -- Input bit width
 	Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
 	Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1

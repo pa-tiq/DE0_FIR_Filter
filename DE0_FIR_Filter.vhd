@@ -110,15 +110,15 @@ architecture rtl of DE0_FIR_Filter is
 component seven_seg_driver
 port(
 -- input control
-	i_h0                       : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble
-	i_h1                       : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble 
-	i_h2                       : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble 
-	i_h3                       : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble 
+	i_h0                : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble
+	i_h1                : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble 
+	i_h2                : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble 
+	i_h3                : in  std_logic_vector(3 downto 0);  -- h(3..0) => nibble 
 -- seven segment output
-	o_h0                       : out std_logic_vector(6 downto 0);   -- h(6..0) => display segment 
-	o_h1                       : out std_logic_vector(6 downto 0);   -- h(6..0) => display segment
-	o_h2                       : out std_logic_vector(6 downto 0);   -- h(6..0) => display segment
-	o_h3                       : out std_logic_vector(6 downto 0));  -- h(6..0) => display segment
+	o_h0                : out std_logic_vector(6 downto 0);   -- h(6..0) => display segment 
+	o_h1                : out std_logic_vector(6 downto 0);   -- h(6..0) => display segment
+	o_h2                : out std_logic_vector(6 downto 0);   -- h(6..0) => display segment
+	o_h3                : out std_logic_vector(6 downto 0));  -- h(6..0) => display segment
 end component;
 
 component fir_filter_test
@@ -142,25 +142,24 @@ port (
 	o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
 end component;
 
-signal w_rstb                     : std_logic;
-signal w_clk                      : std_logic;
-signal w_pattern_sel              : std_logic;  -- '0'=> delta; '1'=> step
-signal w_start_generation         : std_logic;
-signal w_read_request             : std_logic;
-signal data_buffer             	  : std_logic_vector( Wout-1 downto 0); -- to seven segment
-signal w_test_add                 : std_logic_vector( 4 downto 0); -- test read address
+signal w_rstb               : std_logic;
+signal w_clk                : std_logic;
+signal w_pattern_sel        : std_logic;  -- '0'=> delta; '1'=> step
+signal w_start_generation   : std_logic;
+signal w_read_request       : std_logic;
+signal data_buffer          : std_logic_vector( Wout-1 downto 0); -- to seven segment
+signal w_test_add           : std_logic_vector( 4 downto 0); -- test read address
 
 -- SEVEN SEGMENT
-signal w_h0_in                    : std_logic_vector(3 downto 0);
-signal w_h1_in                    : std_logic_vector(3 downto 0);
-signal w_h2_in                    : std_logic_vector(3 downto 0);
-signal w_h3_in                    : std_logic_vector(3 downto 0);
-
+signal w_h0_in              : std_logic_vector(3 downto 0);
+signal w_h1_in              : std_logic_vector(3 downto 0);
+signal w_h2_in              : std_logic_vector(3 downto 0);
+signal w_h3_in              : std_logic_vector(3 downto 0);
 
 begin
 -- CLOCK and RESET
-w_rstb                     <= pad_i_button(0);
-w_clk                      <= pad_i_clock_50;
+w_rstb  <= pad_i_button(0);
+w_clk   <= pad_i_clock_50;
 
 -- LED
 pad_o_ledg(0)  <= '0';
@@ -171,33 +170,33 @@ pad_o_ledg(4)  <= '0';
 pad_o_ledg(5)  <= '0';
 pad_o_ledg(6)  <= '0';
 pad_o_ledg(7)  <= pad_i_button(2);
-pad_o_ledg(8)  <= pad_i_button(1) ;
+pad_o_ledg(8)  <= pad_i_button(1);
 pad_o_ledg(9)  <= pad_i_button(0);
 
 -- SEVEN SEGMENT
 u_seven_seg_driver : seven_seg_driver
 port map(
 -- input control
-	i_h0                       => w_h0_in                    ,
-	i_h1                       => w_h1_in                    ,
-	i_h2                       => w_h2_in                    ,
-	i_h3                       => w_h3_in                    ,
+	i_h0                 => w_h0_in          ,
+	i_h1                 => w_h1_in          ,
+	i_h2                 => w_h2_in          ,
+	i_h3                 => w_h3_in          ,
 -- seven segment output
-	o_h0                       => pad_o_hex0_d               ,
-	o_h1                       => pad_o_hex1_d               ,
-	o_h2                       => pad_o_hex2_d               ,
-	o_h3                       => pad_o_hex3_d               );
+	o_h0                 => pad_o_hex0_d     ,
+	o_h1                 => pad_o_hex1_d     ,
+	o_h2                 => pad_o_hex2_d     ,
+	o_h3                 => pad_o_hex3_d     );
 
 -- SEVEN SEGMENT
-w_h0_in                    <= data_buffer(3 downto 0);
-w_h1_in                    <= data_buffer(7 downto 4);
-w_h2_in                    <= "00"&data_buffer(9 downto 8);
-w_h3_in                    <= w_test_add(3 downto 0);
+w_h0_in           <= data_buffer(3 downto 0);
+w_h1_in           <= data_buffer(7 downto 4);
+w_h2_in           <= "00"&data_buffer(9 downto 8);
+w_h3_in           <= w_test_add(3 downto 0);
 
-pad_o_hex0_dp              <= '0';
-pad_o_hex1_dp              <= '0';
-pad_o_hex2_dp              <= '0';
-pad_o_hex3_dp              <= not w_test_add(4); -- MSB for address
+pad_o_hex0_dp     <= '0';
+pad_o_hex1_dp     <= '0';
+pad_o_hex2_dp     <= '0';
+pad_o_hex3_dp     <= not w_test_add(4); -- MSB for address
 
 
 w_pattern_sel        <= pad_i_sw(9);
