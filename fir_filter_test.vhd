@@ -95,13 +95,17 @@ architecture rtl of fir_filter_test is
 	signal w_data_test     : std_logic_vector( Win-1 downto 0);	
 	signal coeff           : ARRAY_COEFF(0 to Lfilter-1);
 	signal w_data_filter   : std_logic_vector( Wout-1 downto 0);
+	signal fir_output    : std_logic_vector( Wout-1 downto 0);
 
-	type state_type is(init_load_coeff,continue);
+	type state_type is(ST_RESET, ST_LOAD_COEFF, ST_CONTINUE);
 	signal state, next_state	: state_type;
+	signal IsStartup : std_logic := '1';
 
 begin
 
-	process(clk)
+	w_data_filter <= fir_output;
+
+	smachine_1: process (reset,clk)
 	begin
 		if rising_edge(clk) then
 			if (reset = BUTTON_HIGH) then
@@ -110,33 +114,46 @@ begin
 				state <= next_state;
 			end if;
 		end if;
-	end process;
+	end process smachine_1;
 
-	process(State, IsStartup)
+	smachine_2: process(state, IsStartup)
 	begin
-		NextState <= State;
-
-		case State is
+		next_state <= state;
+		case state is
 			when ST_RESET =>
-			if (IsStartup = '1') then
-				NextState <= ST_STARTUP;
-			else
-				NextState <= ST_IDLE;
-			end if;
-		-- ...
+				if (IsStartup = '1') then
+					next_state <= ST_LOAD_COEFF;
+				else
+					next_state <= ST_CONTINUE;
+				end if;
+			when ST_LOAD_COEFF =>
+				if (IsStartup = '0') then
+					next_state <= ST_CONTINUE;
+				end if;
+			when others => null;					
 		end case;
-	end process;
+	end process smachine_2;
 
-	p_coeff : process (reset,clk)
-		variable first_time : std_logic := '0';
+	--p_coeff : process (reset,clk)
+	--	variable first_time : std_logic := '0';
+	--begin
+	--	if(first_time='0' and reset /= BUTTON_HIGH) then
+	--		if(rising_edge(clk)) then
+	--			for k in 0 to Lfilter-1 loop
+	--				coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
+	--			end loop;			
+	--			first_time := '1';
+	--		end if;
+	--	end if;
+	--end process p_coeff;	
+	
+	p_coeff : process (state)
 	begin
-		if(first_time='0' and reset /= BUTTON_HIGH) then
-			if(rising_edge(clk)) then
-				for k in 0 to Lfilter-1 loop
-					coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
-				end loop;			
-				first_time := '1';
-			end if;
+		if(state = ST_LOAD_COEFF) then
+			for k in 0 to Lfilter-1 loop
+				coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
+			end loop;
+			IsStartup <='0';
 		end if;
 	end process p_coeff;
 
@@ -170,7 +187,7 @@ begin
 		reset       => reset      	 	,
 		i_coeff     => coeff 			,
 		i_data      => w_data_test 		,
-		o_data     	=> w_data_filter	);
+		o_data     	=> fir_output		);
 
 	u_fir_output_buffer : fir_output_buffer 
 	generic map( 
