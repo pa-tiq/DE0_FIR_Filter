@@ -17,7 +17,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 -- 2^5 = 32 -> log2(32) = 5
--- 2*8 = 16 -> 16 + 5 - 1 = 22
+-- 2*8 = 16 -> 16 + 5 - 1 = 20
 
 entity fir_filter_4 is
 generic ( 
@@ -106,7 +106,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			o_data  <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-9)));
+			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-Win-1)));
 			--divide by 128 = shift right 7 bits (2^7=128)			
 		end if;
 	end process p_output;
