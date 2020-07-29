@@ -3,16 +3,16 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity tb_fir_filter_test is
-	generic(  
-		Win 		: INTEGER 	:= 8	; -- Input bit width
-		Wmult 		: INTEGER 	:= 16	;-- Multiplier bit width 2*W1
-		Wadd 		: INTEGER 	:= 20	;-- Adder width = Wmult+log2(L)-1
-		Wout 		: INTEGER 	:= 10	;-- Output bit width
-		Lfilter 	: INTEGER 	:= 32	; --Filter Length
-		RANGE_LOW 	: INTEGER 	:= -128 ; --coeff range: power of 2
-		RANGE_HIGH 	: INTEGER 	:= 127  ;
-		BUTTON_HIGH : STD_LOGIC := '0'	;
-		PATTERN_SIZE: INTEGER   := 32 	);
+	generic( 
+	Win 			: INTEGER 	:= 10		; -- Input bit width
+	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 12		;-- Output bit width
+	BUTTON_HIGH 	: STD_LOGIC := '0'		;
+	PATTERN_SIZE	: INTEGER 	:= 32		;
+	RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
+	RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
+	LFilter  		: INTEGER 	:= 512		); -- Filter length
 end tb_fir_filter_test;
 
 architecture behave of tb_fir_filter_test is
@@ -47,7 +47,7 @@ u_fir_filter_test : fir_filter_test
 --	Wmult 	   	 => Wmult		 ,
 --	Wadd 	   	 => Wadd		 ,
 --	Wout 	  	 => Wout		 ,
---	Lfilter 	 => Lfilter		 ,
+--	LFilter 	 => LFilter		 ,
 --	RANGE_LOW 	 => RANGE_LOW	 ,
 --	RANGE_HIGH 	 => RANGE_HIGH	 ,
 --	BUTTON_HIGH  => BUTTON_HIGH	 ,

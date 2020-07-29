@@ -1,12 +1,12 @@
 --UNCOMMENT IF TESTING FILTER INDEPENDENTLY
---library ieee;
---use ieee.std_logic_1164.all;
---use ieee.numeric_std.all;
---
---PACKAGE n_bit_int IS
---	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
---	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
---END n_bit_int;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(7 DOWNTO 0)	; --Win-1
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+END n_bit_int;
 -- ----------------------------------------
 
 LIBRARY work;
@@ -21,12 +21,12 @@ use ieee.numeric_std.all;
 
 entity fir_filter_4 is
 generic ( 
-	Win 			: INTEGER 	:= 8		; -- Input bit width
-	Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 20		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 10		;-- Output bit width
+	Win 			: INTEGER 	:= 10		; -- Input bit width
+	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 12		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	LFilter  		: INTEGER 	:= 32		); -- Filter length
+	LFilter  		: INTEGER 	:= 512		); -- Filter length
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
