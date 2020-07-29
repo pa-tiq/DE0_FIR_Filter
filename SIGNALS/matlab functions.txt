@@ -1,28 +1,41 @@
-FUNÇÕES DE AJUDA MATLAB
+%FUNÇÕES DE AJUDA MATLAB
 
-NORMALIZAR EM UM RANGE:
+%NORMALIZAR EM UM RANGE:
 h_rescaled = (h - min(h))*(127-(-128))/(max(h)-min(h))-128
 output = normalize(input,'range',[-128,127])
 
-ARREDONDAR ELEMENTOS DO VETOR E ESCREVER PARA ARQUIVO:
+%ARREDONDAR ELEMENTOS DO VETOR E ESCREVER PARA %ARQUIVO:
 writematrix(round(input),'nome_do_arquivo')
 
-CENTRALIZAR FUNÇÃO DE FORMA QUE TENHA MÉDIA ZERO
+%CENTRALIZAR FUNÇÃO DE FORMA QUE TENHA MÉDIA ZERO
 Nc = normalize(A,'center','mean')
 
 
 
+%GERAR FILTRO DE TAMANHO L
+L = 513; %tamanho do filtro
+halfFilt = floor(L/2);
+n = -halfFilt:halfFilt;
+w = (0.5*(1+cos(2*pi.*n/(L-1)))).^0.6; %janela
 
+t = linspace(-4,4,L);
+hh = sinc(t);
+filter = (hh.*w)/sum(hh.*w);
 
+RANGE_N = -512;
+RANGE_P = 511;
 
+f1 = normalize(filter,'range',[RANGE_N,RANGE_P]);
+f1 = normalize(f1,'center','median');
 
-fc = 0.01; %controla o comprimento
-L = 10; %sei lá
-n = (1:L)';
-a = 2*fc * sinc(2*fc*(n-L/2))
-[h,z] = freqz(a,1,1000)
+f2 = normalize(f1,'range',[min(f1),RANGE_P]);
+f2 = normalize(f2,'center','median');
 
-t = linspace(-4,4,32);
-yy = sinc(t);
-plot(t,yy);
-xlabel('Time (sec)');ylabel('Amplitude'); title('Sinc Function')
+f3 = normalize(f2,'range',[min(f2),RANGE_P]);
+f3 = normalize(f3,'center','median');
+
+f4 = normalize(f3,'range',[min(f3),RANGE_P]);
+f4 = normalize(f4,'center','median');
+filtro = round(f4);
+plot(filtro);
+writematrix(filtro,'filtro_length_513');

@@ -19,13 +19,13 @@ use ieee.numeric_std.all;
 
 entity fir_output_buffer is
 	generic( 
-		Win 		: INTEGER	:= 8	; -- Input bit width
-		Wout 		: INTEGER	:= 10	;-- Output bit width
+		Win 		: INTEGER	:= 10	; -- Input bit width
+		Wout 		: INTEGER	:= 12	;-- Output bit width
 		BUTTON_HIGH : STD_LOGIC	:= '0'	;
-		PATTERN_SIZE: INTEGER	:= 32	;
-		RANGE_LOW	: INTEGER 	:= -128 ; 
-		RANGE_HIGH 	: INTEGER 	:= 127	;
-		LFilter  	: INTEGER	:= 32	); -- Filter length
+		PATTERN_SIZE: INTEGER	:= 512	;
+		RANGE_LOW	: INTEGER 	:= -512 ; 
+		RANGE_HIGH 	: INTEGER 	:= 511	;
+		LFilter  	: INTEGER	:= 512	); -- Filter length
 	port (
 		i_clk                   : in  std_logic;
 		i_rstb                  : in  std_logic;

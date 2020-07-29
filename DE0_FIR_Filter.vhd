@@ -23,7 +23,7 @@ generic(
 	Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
 	Wout 			: INTEGER 	:= 12		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	PATTERN_SIZE	: INTEGER 	:= 32		;
+	PATTERN_SIZE	: INTEGER 	:= 512		;
 	RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
 	RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
 	LFilter  		: INTEGER 	:= 512		); -- Filter length
@@ -193,7 +193,13 @@ port map(
 -- SEVEN SEGMENT
 w_h0_in           <= data_buffer(3 downto 0);
 w_h1_in           <= data_buffer(7 downto 4);
-w_h2_in           <= "00"&data_buffer(9 downto 8);
+
+-- Wout = 10
+--w_h2_in           <= "00"&data_buffer(9 downto 8);
+
+-- Wout = 12
+w_h2_in           <= data_buffer(11 downto 8);
+
 w_h3_in           <= w_test_add(3 downto 0);
 
 pad_o_hex0_dp     <= '0';

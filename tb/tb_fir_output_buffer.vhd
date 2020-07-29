@@ -56,7 +56,10 @@ begin
 	if(i_rstb='0') then
 		i_write_enable           <= '0';
 		i_read_request           <= '0';
-		i_data                   <= "0000000011";
+		--Wout = 10
+		--i_data                   <= "0000000011"; 
+		--Wout = 12
+		i_data                   <= "000000000011";
 	elsif(rising_edge(i_clk)) then
 		if(control>=10) and  (control<=60) then  -- step
 			i_data                   <= std_logic_vector(unsigned(i_data) + 1);
