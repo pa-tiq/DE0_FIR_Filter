@@ -22,7 +22,7 @@ entity fir_output_buffer is
 		Win 		: INTEGER	:= 10	; -- Input bit width
 		Wout 		: INTEGER	:= 12	;-- Output bit width
 		BUTTON_HIGH : STD_LOGIC	:= '0'	;
-		PATTERN_SIZE: INTEGER	:= 512	;
+		PATTERN_SIZE: INTEGER	:= 32	;
 		RANGE_LOW	: INTEGER 	:= -512 ; 
 		RANGE_HIGH 	: INTEGER 	:= 511	;
 		LFilter  	: INTEGER	:= 512	); -- Filter length

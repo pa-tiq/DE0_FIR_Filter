@@ -111,22 +111,23 @@ begin
 		elsif(rising_edge(clk)) then
 			
 		-- DELTA, STEP, STEP, STEP, .......
-			if(control=10) then  -- delta
-				i_data       <= ('0',others=>'1');
-			elsif(control(7)='1') then  -- step
-				i_data       <= ('0',others=>'1');
-			else
-				i_data       <= (others=>'0');
-			end if;
-			control := control + 1;
-		
-		-- NOISY ANALOG SIGNAL
-		--	if(count < noisy_size) then
-		--		i_data <= NOISY(count);
+		--	if(control=10 and count = 0) then  -- delta
+		--		i_data       <= ('0',others=>'1');
+		--	elsif(control(10)='1' and count <1000 ) then  -- step
+		--		i_data       <= ('0',others=>'1');
 		--		count := count + 1;
 		--	else
-		--		i_data <= (others=>'0');
+		--		i_data       <= (others=>'0');
 		--	end if;
+		--	control := control + 1;
+		
+		-- NOISY ANALOG SIGNAL
+			if(count < noisy_size) then
+				i_data <= NOISY(count);
+				count := count + 1;
+			else
+				i_data <= (others=>'0');
+			end if;
 			
 		end if;
 	end process p_input;
