@@ -107,7 +107,7 @@ begin
 		end if;
 		
 		if(reset=BUTTON_HIGH) then
-			i_data       <= (others=>'0');
+			i_data       <= (others=>'0'); 
 		elsif(rising_edge(clk)) then
 			
 		-- DELTA, STEP, STEP, STEP, .......

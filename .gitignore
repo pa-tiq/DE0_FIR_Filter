@@ -58,7 +58,6 @@
 # *.sdc # I want those timing files
 *.vstf
 *.wlf
-tb/*.*
 # ignore Quartus II generated folders
 */work/
 */tb/work/
