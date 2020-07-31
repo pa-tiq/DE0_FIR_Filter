@@ -6,15 +6,15 @@ use ieee.numeric_std.all;
 
 entity fir_filter_test is
 	generic( 
-		Win 			: INTEGER 	:= 10		; -- Input bit width
-		Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-		Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
-		Wout 			: INTEGER 	:= 12		;-- Output bit width
+		Win 			: INTEGER 	:= 9		; -- Input bit width
+		Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
+		Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
+		Wout 			: INTEGER 	:= 11		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
 		PATTERN_SIZE	: INTEGER 	:= 32		;
-		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
-		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
-		LFilter  		: INTEGER 	:= 512		); -- Filter length
+		RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
+		RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
+		LFilter  		: INTEGER 	:= 256		); -- Filter length
 	port (
 		clk              	  : in  std_logic;
 		reset                 : in  std_logic;
@@ -63,7 +63,7 @@ architecture rtl of fir_filter_test is
 		o_write_enable          : out std_logic);  -- to the output buffer
 	end component;
 	
-	component fir_filter_4 
+	component fir_filter 
 	generic( 
 		Win 		: INTEGER	; -- Input bit width
 		Wmult 		: INTEGER	;-- Multiplier bit width 2*W1
@@ -181,7 +181,7 @@ begin
 		o_data                  => w_data_test             ,
 		o_write_enable          => w_write_enable          );	
 	
-	u_fir_filter_4 : fir_filter_4
+	u_fir_filter : fir_filter
 	generic map( 
 		Win 		 => Win				, -- Input bit width
 		Wmult		 => Wmult			,
