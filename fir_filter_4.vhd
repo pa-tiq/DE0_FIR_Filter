@@ -1,12 +1,12 @@
 --UNCOMMENT IF TESTING THIS MODULE EXCLUSIVELY
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
-END n_bit_int;
+--library ieee;
+--use ieee.std_logic_1164.all;
+--use ieee.numeric_std.all;
+--
+--PACKAGE n_bit_int IS
+--	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
+--	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+--END n_bit_int;
 ------------------------------------------
 
 LIBRARY work;
