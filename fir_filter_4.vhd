@@ -1,4 +1,4 @@
---UNCOMMENT IF TESTING FILTER INDEPENDENTLY
+--UNCOMMENT IF TESTING THIS MODULE EXCLUSIVELY
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -7,7 +7,7 @@ PACKAGE n_bit_int IS
 	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
 	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
 END n_bit_int;
--- ----------------------------------------
+------------------------------------------
 
 LIBRARY work;
 USE work.n_bit_int.ALL;
@@ -80,9 +80,6 @@ begin
 		elsif(rising_edge(clk)) then
 			for k in 0 to (LFilter/2)-1 loop
 				add_st0(k) <= resize(mult(2*k),Wadd)  + resize(mult(2*k+1),Wadd);
-				-- add0(0) <= mult(0) + mult(1)
-				-- add0(1) <= mult(2) + mult(3)
-				-- ...
 			end loop;
 		end if;
 	end process p_add_st0;
