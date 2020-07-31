@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
 	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
 END n_bit_int;
 
@@ -13,20 +13,20 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- 2^9 = 512 -> log2(512) = 9
--- 2*10 = 20 -> 20 + 9 - 1 = 30
+-- 2^8 = 256 -> log2(256) = 8
+-- 2*9 = 18 -> 18 + 8 - 1 = 25
 
 entity DE0_FIR_Filter is
 generic( 
-	Win 			: INTEGER 	:= 10		; -- Input bit width
-	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 12		;-- Output bit width
+	Win 			: INTEGER 	:= 9		; -- Input bit width
+	Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 11		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
 	PATTERN_SIZE	: INTEGER 	:= 32		;
-	RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
-	RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
-	LFilter  		: INTEGER 	:= 512		); -- Filter length
+	RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
+	RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
+	LFilter  		: INTEGER 	:= 256		); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
 	pad_i_clock_50                             : in    std_logic;  --	50 MHz
@@ -197,8 +197,8 @@ w_h1_in           <= data_buffer(7 downto 4);
 -- Wout = 10
 --w_h2_in           <= "00"&data_buffer(9 downto 8);
 
--- Wout = 12
-w_h2_in           <= data_buffer(11 downto 8);
+-- Wout = 11
+w_h2_in           <= "0"&data_buffer(10 downto 8);
 
 w_h3_in           <= w_test_add(3 downto 0);
 

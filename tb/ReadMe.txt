@@ -7,6 +7,6 @@ Run script from menu
 
 Tool->TCL-> Execute Macro...
 
-select "sim_fir_filter_4.do"
+select "sim_fir_filter.do"
 
 run 20 us

@@ -1,5 +1,5 @@
 
-vcom  -work work ../fir_filter_4.vhd
+vcom  -work work ../fir_filter.vhd
 vcom  -work work ../fir_filter_test.vhd
 vcom  -work work ../fir_output_buffer.vhd
 

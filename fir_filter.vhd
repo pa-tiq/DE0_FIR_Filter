@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
 	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
 END n_bit_int;
 ------------------------------------------
@@ -19,23 +19,23 @@ use ieee.numeric_std.all;
 -- 2^5 = 32 -> log2(32) = 5
 -- 2*8 = 16 -> 16 + 5 - 1 = 20
 
-entity fir_filter_4 is
+entity fir_filter is
 generic ( 
-	Win 			: INTEGER 	:= 10		; -- Input bit width
-	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 12		;-- Output bit width
+	Win 			: INTEGER 	:= 9		; -- Input bit width
+	Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 11		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	LFilter  		: INTEGER 	:= 512		); -- Filter length
+	LFilter  		: INTEGER 	:= 256		); -- Filter length
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
 	i_coeff  : in  ARRAY_COEFF							;
 	i_data   : in  std_logic_vector( Win-1 	downto 0)	;
 	o_data   : out std_logic_vector( Wout-1 downto 0)   );
-end fir_filter_4;
+end fir_filter;
 
-architecture rtl of fir_filter_4 is 
+architecture rtl of fir_filter is 
 
 type t_data    is array (0 to Lfilter-1) 	 of signed(Win-1   downto 0);
 type t_mult    is array (0 to Lfilter-1) 	 of signed(Wmult-1 downto 0);
