@@ -1,28 +1,37 @@
-%GERAR FILTRO DE TAMANHO L
-L = 513; %tamanho do filtro
+L = 257; % tamanho do filtro
 halfFilt = floor(L/2);
 n = -halfFilt:halfFilt;
-w = (0.5*(1+cos(2*pi.*n/(L-1)))).^0.6; %janela
+
+w = (0.5*(1+cos(2*pi.*n/(L-1)))).^0.6; % janela de hanning
+tiledlayout(1,3);nexttile;plot(w);grid on;
+pbaspect([1 1 1]);
+title("janela para truncamento do sinc");
+
 
 t = linspace(-4,4,L);
 hh = sinc(t);
+nexttile;plot(hh);grid on;pbaspect([1 1 1]);
+title("funcao sinc");
+
 filter = (hh.*w)/sum(hh.*w);
 
 RANGE_N = -512;
 RANGE_P = 511;
 
+% sequencia de normalizacoes no intervalo e mediana em zero,
+% de forma que os coeficientes fiquem, ao mesmo tempo, entre
+% RANGE_N e RANGE_P e com mediana zero.
+
 f1 = normalize(filter,'range',[RANGE_N,RANGE_P]);
 f1 = normalize(f1,'center','median');
 
-f2 = normalize(f1,'range',[min(f1),RANGE_P]);
-f2 = normalize(f2,'center','median');
+for v = 1:1:3
+    f1 = normalize(f1,'range',[min(f1),RANGE_P]);
+    f1 = normalize(f1,'center','median');
+end
 
-f3 = normalize(f2,'range',[min(f2),RANGE_P]);
-f3 = normalize(f3,'center','median');
+filtro = round(f1);
+nexttile;plot(filtro);grid on;pbaspect([1 1 1]);
+title("funcao sinc-janelada");
 
-f4 = normalize(f3,'range',[min(f3),RANGE_P]);
-f4 = normalize(f4,'center','median');
-
-filtro = round(f4);
-plot(filtro);
-writematrix(filtro,'filtro_length_513');
+writematrix(filtro,'filtro');
