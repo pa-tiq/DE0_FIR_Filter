@@ -10,8 +10,8 @@ entity tb_fir_filter_test is
 		Wout 			: INTEGER 	:= 11		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
 		PATTERN_SIZE	: INTEGER 	:= 32		;
-		RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
-		RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
+		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
+		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
 		LFilter  		: INTEGER 	:= 256		); -- Filter length
 end tb_fir_filter_test;
 

@@ -1,14 +1,3 @@
---UNCOMMENT IF TESTING THIS MODULE EXCLUSIVELY
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
-END n_bit_int;
-------------------------------------------
-
 LIBRARY work;
 USE work.n_bit_int.ALL;
 
@@ -16,15 +5,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- 2^5 = 32 -> log2(32) = 5
--- 2*8 = 16 -> 16 + 5 - 1 = 20
-
 entity fir_filter is
 generic ( 
-	Win 			: INTEGER 	:= 9		; -- Input bit width
-	Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 11		;-- Output bit width
+	Win 			: INTEGER 	:= 10		; -- Input bit width
+	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 12		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
 	LFilter  		: INTEGER 	:= 256		); -- Filter length
 port (

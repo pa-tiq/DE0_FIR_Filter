@@ -18,14 +18,14 @@ use ieee.numeric_std.all;
 
 entity DE0_FIR_Filter is
 generic( 
-	Win 			: INTEGER 	:= 9		; -- Input bit width
-	Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 11		;-- Output bit width
+	Win 			: INTEGER 	:= 10		; -- Input bit width
+	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 12		;-- Output bit width
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
 	PATTERN_SIZE	: INTEGER 	:= 32		;
-	RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
-	RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
+	RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
+	RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
 	LFilter  		: INTEGER 	:= 256		); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
@@ -199,6 +199,9 @@ w_h1_in           <= data_buffer(7 downto 4);
 
 -- Wout = 11
 w_h2_in           <= "0"&data_buffer(10 downto 8);
+
+-- Wout = 12
+--w_h2_in           <= data_buffer(11 downto 8);
 
 w_h3_in           <= w_test_add(3 downto 0);
 
