@@ -1,3 +1,12 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0);
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
+END n_bit_int;
+
 LIBRARY work;
 USE work.n_bit_int.ALL;
 library ieee;
@@ -32,7 +41,6 @@ architecture rtl of fir_filter_test is
 	--constant COEFF_ARRAY : T_COEFF_INPUT := (
 	--0,1,2,5,9,16,25,36,48,62,77,92,105,115,123,127,127,123,115,
 	--105,92,77,62,48,36,25,16,9,5,2,1,0);
-
 
 	-- L=256 RANGE -256 TO 255
 	--constant COEFF_ARRAY : T_COEFF_INPUT := (
@@ -95,8 +103,6 @@ architecture rtl of fir_filter_test is
 	--	-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-3,-3,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-2,-1,-1,
 	--	-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0);
 	
-
-
 	component fir_test_data_generator
 	generic( 
 		Win 		: INTEGER	; -- Input bit width

@@ -1,6 +1,14 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0);
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
+END n_bit_int;
+
 LIBRARY work;
 USE work.n_bit_int.ALL;
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;

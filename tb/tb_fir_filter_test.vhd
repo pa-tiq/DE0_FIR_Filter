@@ -2,13 +2,24 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0);
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
+END n_bit_int;
+
+LIBRARY work;
+USE work.n_bit_int.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 entity tb_fir_filter_test is
 	generic( 
 		Win 			: INTEGER 	:= 9		; -- Input bit width
 		Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
 		Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
 		Wout 			: INTEGER 	:= 11		;-- Output bit width
-		BUTTON_HIGH 	: STD_LOGIC := '0'		;
+--		BUTTON_HIGH 	: STD_LOGIC := '0'		;
 		PATTERN_SIZE	: INTEGER 	:= 32		;
 		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
 		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
