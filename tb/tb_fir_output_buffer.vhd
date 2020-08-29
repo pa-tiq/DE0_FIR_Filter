@@ -6,12 +6,10 @@ use ieee.numeric_std.all;
 
 entity tb_fir_output_buffer is
 	generic( 
-		Win 			: INTEGER 	:= 10		; -- Input bit width
-		Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-		Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
-		Wout 			: INTEGER 	:= 12		;-- Output bit width
+		Win 			: INTEGER 	:= 9		; -- Input bit width
+		Wout 			: INTEGER 	:= 11		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		LFilter  		: INTEGER 	:= 512		);-- Filter length
+		LFilter  		: INTEGER 	:= 256		);-- Filter length
 end tb_fir_output_buffer;
 
 architecture behave of tb_fir_output_buffer is
@@ -57,9 +55,11 @@ begin
 		i_write_enable           <= '0';
 		i_read_request           <= '0';
 		--Wout = 10
-		--i_data                   <= "0000000011"; 
+		--i_data                   <= "0000000011";
+		--Wout = 11
+		i_data                   <= "00000000011";  
 		--Wout = 12
-		i_data                   <= "000000000011";
+		--i_data                   <= "000000000011";
 	elsif(rising_edge(i_clk)) then
 		if(control>=10) and  (control<=60) then  -- step
 			i_data                   <= std_logic_vector(unsigned(i_data) + 1);

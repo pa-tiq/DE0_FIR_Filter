@@ -37,12 +37,17 @@ type T_PATTERN_INPUT is array(0 to PATTERN_SIZE-1) of integer range RANGE_LOW to
 --	-126,-119,-127,-112,-122,-117,-120,-114);
 
 -- TAMANHO 32
+--constant C_PATTERN_DELTA : T_PATTERN_INPUT := (
+--	0,511,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 constant C_PATTERN_DELTA : T_PATTERN_INPUT := (
-	0,511,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	0,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
 -- TAMANHO 32
+--constant C_PATTERN_STEP : T_PATTERN_INPUT := (
+--	0,511,511,511,511,511,511,511,511,511,511,0,0,0,0,0,0,
+--	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 constant C_PATTERN_STEP : T_PATTERN_INPUT := (
-	0,511,511,511,511,511,511,511,511,511,511,0,0,0,0,0,0,
+	0,255,255,255,255,255,255,255,255,255,255,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
 component edge_detector
@@ -90,7 +95,8 @@ begin
 			o_data          <= (others=>'0');
 			o_write_enable  <= '0';
 		elsif(rising_edge(i_clk)) then
-			o_write_enable  <= r_write_counter_ena;
+			--o_write_enable  <= r_write_counter_ena;
+			o_write_enable  <= '1';
 
 			-- NOISY SIGNAL
 			--o_data <= std_logic_vector(to_signed(NOISY_SIGNAL(r_write_counter),Win));

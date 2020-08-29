@@ -14,7 +14,6 @@ USE work.n_bit_int.ALL;
 
 library ieee;
 use ieee.std_logic_1164.all;
-USE ieee.std_logic_arith.ALL;
 use ieee.numeric_std.all;
 
 entity fir_output_buffer is
