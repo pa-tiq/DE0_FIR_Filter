@@ -6,7 +6,7 @@ add wave -noupdate -format Literal -radix decimal /tb_fir_filter/i_coeff
 add wave -noupdate -format Literal -radix decimal /tb_fir_filter/i_data
 add wave -noupdate -format Literal -radix decimal /tb_fir_filter/o_data
 add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter/i_data
-add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fir_filter/o_data
+add wave -noupdate -format Analog-Step -height 200 -radix decimal /tb_fir_filter/o_data
 add wave -noupdate -format Literal -radix unsigned /tb_fir_filter/p_input/control
 TreeUpdate [SetDefaultTree]
 quietly WaveActivateNextPane
