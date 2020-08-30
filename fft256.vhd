@@ -1,13 +1,31 @@
 -- Generic 256 point DIF FFT algorithm using a register
 -- array for data and coefficients
 
+--PACKAGE n_bits_int IS          -- User defined types
+--	SUBTYPE U9 IS INTEGER RANGE 0 TO 2**9-1;
+--	SUBTYPE S16 IS INTEGER RANGE -2**15 TO 2**15-1;
+--	SUBTYPE S32 IS INTEGER RANGE -2147483647 TO 2147483647;
+--	TYPE ARRAY0_7S16 IS ARRAY (0 TO 7) of S16;
+--	TYPE ARRAY0_255S16 IS ARRAY (0 TO 255) of S16;
+--	TYPE ARRAY0_127S16 IS ARRAY (0 TO 127) of S16;
+--	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
+--END n_bits_int;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 PACKAGE n_bits_int IS          -- User defined types
 	SUBTYPE U9 IS INTEGER RANGE 0 TO 2**9-1;
-	SUBTYPE S16 IS INTEGER RANGE -2**15 TO 2**15-1;
-	SUBTYPE S32 IS INTEGER RANGE -2147483647 TO 2147483647;
+	SUBTYPE S16N IS INTEGER RANGE -2**15 TO 2**15-1;
+	SUBTYPE S16 IS STD_LOGIC_VECTOR(15 downto 0);
+	SUBTYPE S16S IS SIGNED(15 downto 0);
 	TYPE ARRAY0_7S16 IS ARRAY (0 TO 7) of S16;
 	TYPE ARRAY0_255S16 IS ARRAY (0 TO 255) of S16;
-	TYPE ARRAY0_127S16 IS ARRAY (0 TO 127) of S16;
+	TYPE ARRAY0_255S16S IS ARRAY (0 TO 255) of S16S;
+	TYPE ARRAY0_255S16N IS ARRAY (0 TO 255) of S16N;
+	TYPE ARRAY0_127S16N IS ARRAY (0 TO 127) of S16N;
+	TYPE ARRAY0_127S16S IS ARRAY (0 TO 127) of S16S;
 	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
 END n_bits_int;
 
@@ -15,7 +33,6 @@ LIBRARY work;
 USE work.n_bits_int.ALL;
 LIBRARY ieee; 
 USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_arith.ALL;
 USE ieee.numeric_std.ALL;
 USE ieee.std_logic_signed.ALL;
 -- --------------------------------------------------------
@@ -40,11 +57,13 @@ ARCHITECTURE fpga OF fft256 IS
 	CONSTANT ldN 	: U9 := 8; -- Log_2 number of points
 
 	-- Register array for 16 bit precision:
-	SIGNAL xr, xi 	: ARRAY0_255S16;
+	--SIGNAL xr, xi : ARRAY0_255S16;
+	SIGNAL xr, xi 	: ARRAY0_255S16S;
 	SIGNAL w : U9 	:= 0;
 
 	-- sine and cosine coefficient arrays
-	CONSTANT cos_rom : ARRAY0_127S16 := (16384,16379,16364,
+	--CONSTANT cos_rom : ARRAY0_127S16 := (16384,16379,16364,
+	CONSTANT cos_rom : ARRAY0_127S16N := (16384,16379,16364,
 	16340,16305,16261,16207,16143,16069,15986,15893,15791,15679,
 	15557,15426,15286,15137,14978,14811,14635,14449,14256,14053,
 	13842,13623,13395,13160,12916,12665,12406,12140,11866,11585,
@@ -59,7 +78,8 @@ ARCHITECTURE fpga OF fft256 IS
 	-15286,-15426,-15557,-15679,-15791,-15893,-15986,-16069,
 	-16143,-16207,-16261,-16305,-16340,-16364,-16379);
 
-	CONSTANT sin_rom : ARRAY0_127S16 := (0,402,804,1205,1606,
+	--CONSTANT sin_rom : ARRAY0_127S16 := (0,402,804,1205,1606,
+	CONSTANT sin_rom : ARRAY0_127S16N := (0,402,804,1205,1606,
 	2006,2404,2801,3196,3590,3981,4370,4756,5139,5520,5897,6270,
 	6639,7005,7366,7723,8076,8423,8765,9102,9434,9760,10080,
 	10394,10702,11003,11297,11585,11866,12140,12406,12665,12916,
@@ -73,28 +93,32 @@ ARCHITECTURE fpga OF fft256 IS
 	7366,7005,6639,6270,5897,5520,5139,4756,4370,3981,3590,3196,
 	2801,2404,2006,1606,1205,804,402);
 
-	SIGNAL sin , cos : S16;
+	--SIGNAL sin , cos : S16;
+	SIGNAL sin , cos : S16S;
 
 BEGIN
 
 	sin_read: PROCESS (clk)
 	BEGIN
 		IF falling_edge(clk) THEN
-			sin <= sin_rom(w); -- Read from ROM
+			--sin <= sin_rom(w); -- Read from ROM
+			sin <= to_signed(sin_rom(w),16);
 		END IF;
 	END PROCESS;
 
 	cos_read: PROCESS (clk)
 	BEGIN
 		IF falling_edge(clk) THEN
-			cos <= cos_rom(w); -- Read from ROM
+			--cos <= cos_rom(w); -- Read from ROM
+			cos <= to_signed(cos_rom(w),16);
 		END IF;
 	END PROCESS;
 
 	States: PROCESS(clk, reset, w)-----> FFT in behavioral style
 		VARIABLE i1, i2, gcount, k1, k2   : U9 := 0;
 		VARIABLE stage, dw, count, rcount  : U9 := 0;
-		VARIABLE tr, ti : S16 := 0;
+		--VARIABLE tr, ti : S16 := 0;
+		VARIABLE tr, ti : S16S := (others => '0');
 		VARIABLE slv, rslv : STD_LOGIC_VECTOR(0 TO ldN-1);
 	BEGIN	
 		IF reset = '0' THEN           -- Asynchronous reset
@@ -107,8 +131,10 @@ BEGIN
 					i1:=0; i2 := N/2; k1:=N;
 					k2:=N/2; dw := 1; fft_valid <= '0';
 				WHEN load =>       -- Read in all data from I/O ports
-					xr(count) <= xr_in; 
-					xi(count) <= xi_in;
+					--xr(count) <= xr_in; 
+					--xi(count) <= xi_in;
+					xr(count) <= signed(xr_in); 
+					xi(count) <= signed(xi_in);
 					count := count + 1;
 					IF count = N THEN  s <= calc;
 					ELSE               s <= load;
@@ -118,8 +144,10 @@ BEGIN
 					xr(i1) <= xr(i1) + xr(i2);
 					ti := xi(i1) - xi(i2);
 					xi(i1) <= xi(i1) + xi(i2);
-					xr(i2) <= (cos * tr + sin * ti)/2**14;
-					xi(i2) <= (cos * ti - sin * tr)/2**14;
+					--xr(i2) <= (cos * tr + sin * ti)/2**14;
+					--xi(i2) <= (cos * ti - sin * tr)/2**14;
+					xr(i2) <= resize(shift_right((cos * tr + sin * ti),14),16);					
+					xi(i2) <= resize(shift_right((cos * ti - sin * tr),14),16);
 					s <= update;
 				WHEN update =>           -- All counters and pointers
 					s  <= calc; -- By default do next butterfly
@@ -155,12 +183,13 @@ BEGIN
 					END IF;
 				WHEN reverse =>   -- Apply bitreverse
 					fft_valid <= '1';
-					slv := CONV_STD_LOGIC_VECTOR(count, ldn);
+					slv := STD_LOGIC_VECTOR(to_unsigned(count, ldn));
 					FOR i IN 0 TO ldn-1 LOOP
 						rslv(i) := slv(ldn-i-1);
 					END LOOP;
 					rcount := CONV_INTEGER('0' & rslv);
-					fftr <= xr(rcount); ffti <= xi(rcount);
+					fftr <= std_logic_vector(xr(rcount)); 
+					ffti <= std_logic_vector(xi(rcount));
 					count := count + 1;
 					IF count >= N THEN  s <= done;
 					ELSE                s <= reverse;
@@ -181,8 +210,8 @@ BEGIN
 	END PROCESS States;
 	
 	Rk: FOR k IN 0 TO 7 GENERATE -- Show first 8
-		xr_out(k) <= xr(k);        -- register values
-		xi_out(k) <= xi(k);
+		xr_out(k) <= std_logic_vector(xr(k));        -- register values
+		xi_out(k) <= std_logic_vector(xi(k));
 	END GENERATE;
 	
 END fpga; 

@@ -1,13 +1,31 @@
 -- Generic 256 point DIF FFT algorithm using a register
 -- array for data and coefficients
 
+--PACKAGE n_bits_int IS          -- User defined types
+--	SUBTYPE U9 IS INTEGER RANGE 0 TO 2**9-1;
+--	SUBTYPE S16 IS INTEGER RANGE -2**15 TO 2**15-1;
+--	SUBTYPE S32 IS INTEGER RANGE -2147483647 TO 2147483647;
+--	TYPE ARRAY0_7S16 IS ARRAY (0 TO 7) of S16;
+--	TYPE ARRAY0_255S16 IS ARRAY (0 TO 255) of S16;
+--	TYPE ARRAY0_127S16 IS ARRAY (0 TO 127) of S16;
+--	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
+--END n_bits_int;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 PACKAGE n_bits_int IS          -- User defined types
 	SUBTYPE U9 IS INTEGER RANGE 0 TO 2**9-1;
-	SUBTYPE S16 IS INTEGER RANGE -2**15 TO 2**15-1;
-	SUBTYPE S32 IS INTEGER RANGE -2147483647 TO 2147483647;
+	SUBTYPE S16N IS INTEGER RANGE -2**15 TO 2**15-1;
+	SUBTYPE S16 IS STD_LOGIC_VECTOR(15 downto 0);
+	SUBTYPE S16S IS SIGNED(15 downto 0);
 	TYPE ARRAY0_7S16 IS ARRAY (0 TO 7) of S16;
 	TYPE ARRAY0_255S16 IS ARRAY (0 TO 255) of S16;
-	TYPE ARRAY0_127S16 IS ARRAY (0 TO 127) of S16;
+	TYPE ARRAY0_255S16S IS ARRAY (0 TO 255) of S16S;
+	TYPE ARRAY0_255S16N IS ARRAY (0 TO 255) of S16N;
+	TYPE ARRAY0_127S16N IS ARRAY (0 TO 127) of S16N;
+	TYPE ARRAY0_127S16S IS ARRAY (0 TO 127) of S16S;
 	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
 END n_bits_int;
 
@@ -15,7 +33,6 @@ LIBRARY work;
 USE work.n_bits_int.ALL;
 LIBRARY ieee; 
 USE ieee.std_logic_1164.ALL;
---USE ieee.std_logic_arith.ALL;
 USE ieee.numeric_std.ALL;
 USE ieee.std_logic_signed.ALL;
 
@@ -39,7 +56,7 @@ architecture behave of tb_fft256 is
 	END component;
 
 	-- L=256 RANGE -256 TO 255
-	--constant COEFF_ARRAY : ARRAY0_255S16 := (
+	--constant COEFF_ARRAY : ARRAY0_255S16N := (
 	--	0,0,0,0,0,0,-1,-1,-1,-1,-1,-2,-2,-2,-3,-3,-3,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-3,-3,
 	--	-2,-2,-1,0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,15,16,17,17,17,17,17,16,16,15,14,12,
 	--	11,9,7,5,3,0,-3,-6,-9,-12,-15,-18,-21,-24,-27,-30,-33,-35,-38,-40,-42,-43,-45,-45,
@@ -52,7 +69,7 @@ architecture behave of tb_fft256 is
 	--	-4,-4,-4,-4,-4,-4,-4,-4,-4,-3,-3,-3,-2,-2,-2,-1,-1,-1,-1,-1,0,0,0,0,0,0);
 
 	-- L=256 RANGE -512 TO 511
-	constant COEFF_ARRAY : ARRAY0_255S16 := (
+	constant COEFF_ARRAY : ARRAY0_255S16N := (
 		0,0,0,0,0,-1,-1,-1,-2,-2,-3,-4,-4,-5,-5,-6,-7,-7,-8,-8,-8,-8,-8,-8,-8,-8,-7,-6,-5,-4,-3,
 		-2,0,2,4,6,8,10,12,15,17,19,22,24,26,28,29,31,32,33,34,34,34,34,33,31,30,27,25,22,18,14,
 		10,5,0,-5,-11,-17,-23,-29,-36,-42,-48,-54,-60,-66,-71,-76,-80,-84,-87,-89,-91,-91,-91,
@@ -108,19 +125,20 @@ begin
 		variable count 		: integer := 0;
 	begin
 		if(reset='0') then
-			xr_in  <= 0;
-			xi_in  <= 0;
+			xr_in  <= (others => '0');
+			xi_in  <= (others => '0');
 		elsif(rising_edge(clk)) then
 			if(count < 50) then
-				xr_in <= 0; 
+				xr_in <= (others => '0'); 
 				count := count+1;				
 			elsif(count < COEFF_ARRAY'length + 50) then
-				xr_in  <= COEFF_ARRAY(count-50);
+				--xr_in  <= COEFF_ARRAY(count-50);
+				xr_in  <= std_logic_vector(to_signed(COEFF_ARRAY(count-50),16));
 				count := count+1;
 			else
-				xr_in <= 0; 
+				xr_in <= (others => '0'); 
 			end if;
-			xi_in  <= 0;
+			xi_in  <= (others => '0');
 			
 		end	if;
 	end process p_input;

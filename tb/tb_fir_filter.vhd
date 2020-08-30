@@ -166,7 +166,7 @@ begin
 		-- DELTA, STEP ...........
 			if(control=10 and count = 0) then  -- delta
 				i_data       <= ('0',others=>'1');
-			elsif(control(10)='1' and count <300 ) then  -- step
+			elsif(control(10)='1' and count <1000 ) then  -- step
 				i_data       <= ('0',others=>'1');
 				count := count + 1;
 			else
