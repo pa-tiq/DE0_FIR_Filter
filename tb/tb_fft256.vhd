@@ -111,9 +111,14 @@ begin
 			xr_in  <= 0;
 			xi_in  <= 0;
 		elsif(rising_edge(clk)) then
-			xr_in  <= to_integer(to_signed(COEFF_ARRAY(count),9));
+			if(count <= 255) then
+				xr_in  <= to_integer(to_signed(COEFF_ARRAY(count),9));
+				count := count+1;
+			else
+				xr_in <= 0; 
+			end if;
 			xi_in  <= 0;
-			count := count+1;
+			
 		end	if;
 	end process p_input;
 
