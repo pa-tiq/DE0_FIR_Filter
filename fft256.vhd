@@ -123,6 +123,8 @@ BEGIN
 	BEGIN	
 		IF reset = '0' THEN           -- Asynchronous reset
 			s <= start;
+			fftr <= (others => '0');
+			ffti <= (others => '0');
 		ELSIF rising_edge(clk) THEN
 			CASE s IS                 -- Next State assignments
 				WHEN start =>

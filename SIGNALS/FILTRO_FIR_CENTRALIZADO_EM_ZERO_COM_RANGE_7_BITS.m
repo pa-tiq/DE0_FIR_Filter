@@ -3,11 +3,11 @@ halfFilt = floor(L/2);
 n = -halfFilt:halfFilt;
 
 %w = (0.5*(1+cos(2*pi.*n/(L-1)))).^0.6; % janela de hanning
-%t = linspace(-4,4,L);
+%t = linspace(-2,2,L);
 %hh = sinc(t);
 %filter = (hh.*w)/sum(hh.*w);
 
-w = blackmanharris(L)';
+w = hamming(L)';
 hh = 0.4*sinc(0.15*n);
 filter = hh.*w;
 %fvtool(filter,1);
