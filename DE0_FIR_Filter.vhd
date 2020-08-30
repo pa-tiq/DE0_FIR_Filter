@@ -207,10 +207,30 @@ pad_o_hex1_dp     <= '0';
 pad_o_hex2_dp     <= '0';
 pad_o_hex3_dp     <= not w_test_add(4); -- MSB for address
 
+p_input : process (w_rstb,w_clk)
+variable control : unsigned(9 downto 0):= (others=>'0');
+begin
+	if(w_rstb='0') then
+		w_start_generation           <= '0';
+	elsif(rising_edge(w_clk)) then
+		if(control=10) then 
+			w_start_generation       <= '1';
+		else
+			w_start_generation       <= '0';
+		end if;
+		control := control + 1;
+		
+		if(control>100)then
+			w_read_request           <= control(3);
+		else
+			w_read_request           <= '0';
+		end if;
+	end if;
+end process p_input;
 
 w_pattern_sel        <= pad_i_sw(9);
-w_start_generation   <= not pad_i_button(2);
-w_read_request       <= not pad_i_button(1);
+--w_start_generation   <= not pad_i_button(2);
+--w_read_request       <= not pad_i_button(1);
 
 u_fir_filter_test : fir_filter_test
 generic map(

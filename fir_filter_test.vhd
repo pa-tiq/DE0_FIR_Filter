@@ -1,12 +1,12 @@
 --UNCOMMENT IF TESTING THIS MODULE EXCLUSIVELY
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
-END n_bit_int;
+--library ieee;
+--use ieee.std_logic_1164.all;
+--use ieee.numeric_std.all;
+--
+--PACKAGE n_bit_int IS
+--	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
+--	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+--END n_bit_int;
 ------------------------------------------
 
 LIBRARY work;
@@ -114,12 +114,15 @@ architecture rtl of fir_filter_test is
 	signal w_data_test     : std_logic_vector( Win-1 downto 0);	
 	signal coeff           : ARRAY_COEFF(0 to Lfilter-1);
 	signal fir_output      : std_logic_vector( Wout-1 downto 0);
+	signal buffer_output    : std_logic_vector( Wout-1 downto 0);
 
 	type state_type is(ST_RESET, ST_LOAD_COEFF, ST_CONTINUE);
 	signal state, next_state	: state_type;
 	signal IsStartup : std_logic := '1';
 
 begin
+
+	o_data_buffer <= fir_output;
 
 	smachine_1: process (reset,clk)
 	begin
@@ -220,7 +223,7 @@ begin
 		i_write_enable      => w_write_enable     ,
 		i_data              => fir_output      ,
 		i_read_request      => i_read_request     ,
-		o_data              => o_data_buffer      ,
+		o_data              => buffer_output      ,
 		o_test_add          => o_test_add         );
 
 end rtl;
