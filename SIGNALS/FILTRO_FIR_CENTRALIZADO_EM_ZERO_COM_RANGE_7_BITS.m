@@ -10,7 +10,7 @@ n = -halfFilt:halfFilt;
 w = hamming(L)';
 hh = 0.4*sinc(0.15*n);
 filter = hh.*w;
-%fvtool(filter,1);
+fvtool(filter,1);
 
 RANGE_N = -512;
 RANGE_P = 511;

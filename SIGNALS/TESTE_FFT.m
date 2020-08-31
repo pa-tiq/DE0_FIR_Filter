@@ -1,7 +1,9 @@
 Fs = 900;            % Sampling frequency                    
 T = 1/Fs;             % Sampling period       
-L = 256;             % Length of signal
+L = 257;             % Length of signal
 t = (0:L-1)*T;        % Time vector
+halfFilt = floor(L/2);
+n = -halfFilt:halfFilt;
 
 S = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
 X = S + randn(size(t));
@@ -10,11 +12,25 @@ title('Signal Corrupted with Zero-Mean Random Noise');
 xlabel('t (milliseconds)');
 ylabel('X(t)');
 
-Y = fft(X);
+%Y = fft(X);
+%P2 = abs(Y/L);
+%P1 = P2(1:L/2+1);
+%P1(2:end-1) = 2*P1(2:end-1);
+%f = Fs*(0:(L/2))/L;
+%plot(f,P1) ;
+%title('Single-Sided Amplitude Spectrum of X(t)');
+%xlabel('f (Hz)');
+%ylabel('|P1(f)|');
+
+w = hamming(L)';
+hh = 0.4*sinc(0.15*n);
+filterr = hh.*w;
+Y = fft(filterr);
 P2 = abs(Y/L);
-P1 = P2(1:L/2+1);
+P1 = P2(1:floor(L/2)+1);
 P1(2:end-1) = 2*P1(2:end-1);
 f = Fs*(0:(L/2))/L;
+plot(f,P1) ;
 plot(f,P1) ;
 title('Single-Sided Amplitude Spectrum of X(t)');
 xlabel('f (Hz)');
