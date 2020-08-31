@@ -128,10 +128,16 @@ BEGIN
 		ELSIF rising_edge(clk) THEN
 			CASE s IS                 -- Next State assignments
 				WHEN start =>
-					s <= load; count := 0;
-					gcount := 0; stage:= 1; 
-					i1:=0; i2 := N/2; k1:=N;
-					k2:=N/2; dw := 1; fft_valid <= '0';
+					s <= load;
+					count := 0;
+					gcount := 0; 
+					stage:= 1; 
+					i1:=0; 
+					i2 := N/2; 
+					k1:=N;
+					k2:=N/2; 
+					dw := 1; 
+					fft_valid <= '0';
 				WHEN load =>       -- Read in all data from I/O ports
 					--xr(count) <= xr_in; 
 					--xi(count) <= xi_in;
@@ -148,8 +154,8 @@ BEGIN
 					xi(i1) <= xi(i1) + xi(i2);
 					--xr(i2) <= (cos * tr + sin * ti)/2**14;
 					--xi(i2) <= (cos * ti - sin * tr)/2**14;
-					xr(i2) <= resize(shift_right((cos * tr + sin * ti),14),16);					
-					xi(i2) <= resize(shift_right((cos * ti - sin * tr),14),16);
+					xr(i2) <= resize(shift_right((cos * tr + sin * ti),14),16);		
+					xi(i2) <= resize(shift_right((cos * ti - sin * tr),14),16);												
 					s <= update;
 				WHEN update =>           -- All counters and pointers
 					s  <= calc; -- By default do next butterfly

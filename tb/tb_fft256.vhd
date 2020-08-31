@@ -48,11 +48,11 @@ architecture behave of tb_fft256 is
 		  fftr, ffti 		: OUT S16; -- Real and imag. output
 		  rcount_o 			: OUT U9; -- Bitreverese index counter
 		  xr_out, xi_out 	: OUT ARRAY0_7S16; -- First 8 reg. files
-		  stage_o, gcount_o : OUT U9; --Stage and group count
+		  stage_o, gcount_o : OUT U9; -- Stage and group count
 		  i1_o, i2_o 		: OUT U9; -- (Dual) data index
 		  k1_o, k2_o 		: OUT U9; -- Index offset
 		  w_o, dw_o  		: OUT U9; -- Cos/Sin (increment) angle
-		  wo 				: OUT U9);-- Decision tree location loop FSM
+		  wo 				: OUT U9);-- Decision tree location loop Finite State Machine
 	END component;
 
 	-- L=256 RANGE -256 TO 255
@@ -160,8 +160,7 @@ begin
 			else
 				xr_in <= (others => '0'); 
 			end if;
-			xi_in  <= (others => '0');
-			
+			xi_in  <= (others => '0');			
 		end	if;
 	end process p_input;
 
