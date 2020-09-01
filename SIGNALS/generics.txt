@@ -1,9 +1,46 @@
+L = 4096, -128 to 127
+
+Win 			: INTEGER 	:= 8		; -- Input bit width
+Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*Win
+Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
+Wout 			: INTEGER 	:= 10		;-- Output bit width: between Win and Wadd
+BUTTON_HIGH 	: STD_LOGIC := '0'		;
+PATTERN_SIZE	: INTEGER 	:= 32		;
+RANGE_LOW 		: INTEGER 	:= -128		; --pattern range: power of 2
+RANGE_HIGH 		: INTEGER 	:= 127		; --must change pattern too
+LFilter  		: INTEGER 	:= 4096		); -- Filter length
+
+L = 2048, -128 to 127
+
+Win 			: INTEGER 	:= 8		;-- Input bit width
+Wmult			: INTEGER 	:= 16		;-- Multiplier bit width 2*Win
+Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
+Wout 			: INTEGER 	:= 10		;-- Output bit width: between Win and Wadd
+BUTTON_HIGH 	: STD_LOGIC := '0'		;
+PATTERN_SIZE	: INTEGER 	:= 32		;
+RANGE_LOW 		: INTEGER 	:= -128		; --pattern range: power of 2
+RANGE_HIGH 		: INTEGER 	:= 127		; --must change pattern too
+LFilter  		: INTEGER 	:= 2048		); -- Filter length
+
+L = 2048, -64 to 63
+
+Win 			: INTEGER 	:= 7		;-- Input bit width
+Wmult			: INTEGER 	:= 14		;-- Multiplier bit width 2*Win
+Wadd 			: INTEGER 	:= 24		;-- Adder width = Wmult+log2(L)-1
+Wout 			: INTEGER 	:= 9		;-- Output bit width: between Win and Wadd
+BUTTON_HIGH 	: STD_LOGIC := '0'		;
+PATTERN_SIZE	: INTEGER 	:= 32		;
+RANGE_LOW 		: INTEGER 	:= -64		; --pattern range: power of 2
+RANGE_HIGH 		: INTEGER 	:= 63		; --must change pattern too
+LFilter  		: INTEGER 	:= 2048		); -- Filter length
+
+
 L = 256, -256 to 255
 
-Win 			: INTEGER 	:= 9		; -- Input bit width
+Win 			: INTEGER 	:= 9		;-- Input bit width
 Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*Win
 Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
-Wout 			: INTEGER 	:= 11		;-- Output bit width Win+2
+Wout 			: INTEGER 	:= 11		;-- Output bit width: between Win and Wadd
 BUTTON_HIGH 	: STD_LOGIC := '0'		;
 PATTERN_SIZE	: INTEGER 	:= 32		;
 RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
@@ -12,10 +49,10 @@ LFilter  		: INTEGER 	:= 256		); -- Filter length
 
 L = 256, -512 to 511
 
-Win 			: INTEGER 	:= 10		; -- Input bit width
+Win 			: INTEGER 	:= 10		;-- Input bit width
 Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*Win
 Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
-Wout 			: INTEGER 	:= 12		;-- Output bit width Win+2
+Wout 			: INTEGER 	:= 20		;-- Output bit width: between Win and Wadd
 BUTTON_HIGH 	: STD_LOGIC := '0'		;
 PATTERN_SIZE	: INTEGER 	:= 32		;
 RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
@@ -27,7 +64,7 @@ L = 512, -256 to 255
 Win 			: INTEGER 	:= 9		; -- Input bit width
 Wmult			: INTEGER 	:= 18    	;-- Multiplier bit width 2*Win
 Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
-Wout 			: INTEGER 	:= 11		;-- Output bit width Win+2
+Wout 			: INTEGER 	:= 11		;-- Output bit width: between Win and Wadd
 BUTTON_HIGH 	: STD_LOGIC := '0'		;
 PATTERN_SIZE	: INTEGER 	:= 32		;
 RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2

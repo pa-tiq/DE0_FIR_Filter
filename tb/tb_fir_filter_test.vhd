@@ -19,7 +19,7 @@ entity tb_fir_filter_test is
 		Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
 		Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
 		Wout 			: INTEGER 	:= 11		;-- Output bit width
---		BUTTON_HIGH 	: STD_LOGIC := '0'		;
+		BUTTON_HIGH 	: STD_LOGIC := '0'		;
 		PATTERN_SIZE	: INTEGER 	:= 32		;
 		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
 		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
@@ -28,7 +28,17 @@ end tb_fir_filter_test;
 
 architecture behave of tb_fir_filter_test is
 
-component fir_filter_test 
+component fir_filter_test
+generic( 
+	Win 			: INTEGER 	; -- Input bit width
+	Wmult			: INTEGER 	;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 	;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	;-- Output bit width
+	BUTTON_HIGH 	: STD_LOGIC ;
+	PATTERN_SIZE	: INTEGER 	;
+	RANGE_LOW 		: INTEGER 	; --pattern range: power of 2
+	RANGE_HIGH 		: INTEGER 	; --must change pattern too
+	LFilter  		: INTEGER 	); -- Filter length
 port (
 	clk                   	: in  std_logic;
 	reset                  	: in  std_logic;
@@ -53,16 +63,16 @@ clk   <= not clk after 5 ns;
 reset  <= '0', '1' after 132 ns;
 
 u_fir_filter_test : fir_filter_test
---generic map( 
---	Win 	   	 => Win			 ,
---	Wmult 	   	 => Wmult		 ,
---	Wadd 	   	 => Wadd		 ,
---	Wout 	  	 => Wout		 ,
---	LFilter 	 => LFilter		 ,
---	RANGE_LOW 	 => RANGE_LOW	 ,
---	RANGE_HIGH 	 => RANGE_HIGH	 ,
---	BUTTON_HIGH  => BUTTON_HIGH	 ,
---	PATTERN_SIZE => PATTERN_SIZE )
+generic map( 
+	Win 	   	 => Win			 ,
+	Wmult 	   	 => Wmult		 ,
+	Wadd 	   	 => Wadd		 ,
+	Wout 	  	 => Wout		 ,
+	LFilter 	 => LFilter		 ,
+	RANGE_LOW 	 => RANGE_LOW	 ,
+	RANGE_HIGH 	 => RANGE_HIGH	 ,
+	BUTTON_HIGH  => BUTTON_HIGH	 ,
+	PATTERN_SIZE => PATTERN_SIZE )
 port map(
 	clk              	 => clk                  ,
 	reset                => reset                ,

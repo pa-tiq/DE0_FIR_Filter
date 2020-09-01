@@ -1,4 +1,4 @@
-L = 257; % tamanho do filtro
+L = 256; % tamanho do filtro
 halfFilt = floor(L/2);
 n = -halfFilt:halfFilt;
 
@@ -7,10 +7,12 @@ n = -halfFilt:halfFilt;
 %hh = sinc(t);
 %filter = (hh.*w)/sum(hh.*w);
 
+a = 1; %amplitude
+b = 0.6; %quanto maior, mais fininho, geralmente está em 0.6
 w = hamming(L)';
-hh = 0.4*sinc(0.15*n);
+hh = a*sinc(b*n);
 filter = hh.*w;
-fvtool(filter,1);
+%fvtool(filter,1);
 
 RANGE_N = -512;
 RANGE_P = 511;

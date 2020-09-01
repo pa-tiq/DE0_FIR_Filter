@@ -11,23 +11,23 @@
 --	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
 --END n_bits_int;
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-PACKAGE n_bits_int IS          -- User defined types
-	SUBTYPE U9 IS INTEGER RANGE 0 TO 2**9-1;
-	SUBTYPE S16N IS INTEGER RANGE -2**15 TO 2**15-1;
-	SUBTYPE S16 IS STD_LOGIC_VECTOR(15 downto 0);
-	SUBTYPE S16S IS SIGNED(15 downto 0);
-	TYPE ARRAY0_7S16 IS ARRAY (0 TO 7) of S16;
-	TYPE ARRAY0_255S16 IS ARRAY (0 TO 255) of S16;
-	TYPE ARRAY0_255S16S IS ARRAY (0 TO 255) of S16S;
-	TYPE ARRAY0_255S16N IS ARRAY (0 TO 255) of S16N;
-	TYPE ARRAY0_127S16N IS ARRAY (0 TO 127) of S16N;
-	TYPE ARRAY0_127S16S IS ARRAY (0 TO 127) of S16S;
-	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
-END n_bits_int;
+--library ieee;
+--use ieee.std_logic_1164.all;
+--use ieee.numeric_std.all;
+--
+--PACKAGE n_bits_int IS          -- User defined types
+--	SUBTYPE U9 IS INTEGER RANGE 0 TO 2**9-1;
+--	SUBTYPE S16N IS INTEGER RANGE -2**15 TO 2**15-1;
+--	SUBTYPE S16 IS STD_LOGIC_VECTOR(15 downto 0);
+--	SUBTYPE S16S IS SIGNED(15 downto 0);
+--	TYPE ARRAY0_7S16 IS ARRAY (0 TO 7) of S16;
+--	TYPE ARRAY0_255S16 IS ARRAY (0 TO 255) of S16;
+--	TYPE ARRAY0_255S16S IS ARRAY (0 TO 255) of S16S;
+--	TYPE ARRAY0_255S16N IS ARRAY (0 TO 255) of S16N;
+--	TYPE ARRAY0_127S16N IS ARRAY (0 TO 127) of S16N;
+--	TYPE ARRAY0_127S16S IS ARRAY (0 TO 127) of S16S;
+--	TYPE STATE_TYPE IS(start, load, calc, update, reverse, done);
+--END n_bits_int;
 
 LIBRARY work; 
 USE work.n_bits_int.ALL;
@@ -37,29 +37,36 @@ USE ieee.numeric_std.ALL;
 USE ieee.std_logic_signed.ALL;
 -- --------------------------------------------------------
 ENTITY fft256 IS   ------> Interface
-PORT (clk, reset 		: IN  STD_LOGIC; 	-- Clock and reset
-	  xr_in, xi_in   	: IN  S16; 		 	-- Real and imag. input
-	  fft_valid 		: OUT STD_LOGIC; 	-- FFT output is valid
-	  fftr, ffti 		: OUT S16; 		 	-- Real and imag. output
-	  rcount_o 			: OUT U9; 			-- Bitreverese index counter
-	  xr_out, xi_out 	: OUT ARRAY0_7S16; 	-- First 8 reg. files
-	  stage_o, gcount_o : OUT U9; 			-- Stage and group count
-	  i1_o, i2_o 		: OUT U9; 			-- (Dual) data index
-	  k1_o, k2_o 		: OUT U9; 			-- Index offset
-	  w_o, dw_o  		: OUT U9; 			-- Cos/Sin (increment) angle
-	  wo 				: OUT U9);			-- Decision tree location loop FSM
+generic ( 
+	Win 			: INTEGER 	:= 7		; -- Input bit width
+	LFilter  		: INTEGER 	:= 2048		;
+	Log2LFilter     : INTEGER   := 11       ); -- Filter length
+PORT (
+	clk, reset 			: IN  STD_LOGIC; 	-- Clock and reset
+	xr_in, xi_in   		: IN  S16; 		 	-- Real and imag. input
+	fft_valid 			: OUT STD_LOGIC; 	-- FFT output is valid
+	fftr, ffti 			: OUT S16; 		 	-- Real and imag. output
+	rcount_o 			: OUT U9; 			-- Bitreverese index counter
+	xr_out, xi_out 		: OUT ARRAY0_7S16; 	-- First 8 reg. files
+	stage_o, gcount_o 	: OUT U9; 			-- Stage and group count
+	i1_o, i2_o 			: OUT U9; 			-- (Dual) data index
+	k1_o, k2_o 			: OUT U9; 			-- Index offset
+	w_o, dw_o  			: OUT U9; 			-- Cos/Sin (increment) angle
+	wo 					: OUT U9);			-- Decision tree location loop FSM
 END fft256;
 
 ARCHITECTURE fpga OF fft256 IS
 
 	SIGNAL s    	: STATE_TYPE; -- State machine variable
-	CONSTANT N 		: U9 := 256; -- Number of points
-	CONSTANT ldN 	: U9 := 8; -- Log_2 number of points
+	--CONSTANT N 	: U9 := 256; -- Number of points
+	--CONSTANT ldN 	: U9 := 8; -- Log_2 number of points
+	CONSTANT N 		: U9 := LFilter; -- Number of points
+	CONSTANT ldN 	: U9 := Log2LFilter; -- Log_2 number of points
 
 	-- Register array for 16 bit precision:
 	--SIGNAL xr, xi : ARRAY0_255S16;
 	SIGNAL xr, xi 	: ARRAY0_255S16S;
-	SIGNAL w : U9 	:= 0;
+	SIGNAL w: U9 	:= 0;
 
 	-- sine and cosine coefficient arrays
 	--CONSTANT cos_rom : ARRAY0_127S16 := (16384,16379,16364,
@@ -99,18 +106,34 @@ ARCHITECTURE fpga OF fft256 IS
 BEGIN
 
 	sin_read: PROCESS (clk)
+		variable w_sen : U9 := 0;
 	BEGIN
 		IF falling_edge(clk) THEN
 			--sin <= sin_rom(w); -- Read from ROM
-			sin <= to_signed(sin_rom(w),16);
+			w_sen := w;
+			while(w_sen>sin_rom'length-1) loop
+				w_sen := (sin_rom'length-1) - (w_sen - (sin_rom'length-1));
+				if (w_sen < 0) then
+					w_sen := -w_sen;
+				end if;
+			end loop;
+			sin <= to_signed(sin_rom(w_sen),16);
 		END IF;
 	END PROCESS;
 
 	cos_read: PROCESS (clk)
+		variable w_cos : U9 := 0;
 	BEGIN
 		IF falling_edge(clk) THEN
 			--cos <= cos_rom(w); -- Read from ROM
-			cos <= to_signed(cos_rom(w),16);
+			w_cos := w;
+			while(w_cos>cos_rom'length-1) loop
+				w_cos := (cos_rom'length-1) - (w_cos - (cos_rom'length-1));
+				if (w_cos < 0) then
+					w_cos := -w_cos;
+				end if;
+			end loop;
+			cos <= to_signed(cos_rom(w_cos),16);
 		END IF;
 	END PROCESS;
 

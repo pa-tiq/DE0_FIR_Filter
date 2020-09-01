@@ -1,12 +1,3 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0);
-	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
-END n_bit_int;
-
 LIBRARY work;
 USE work.n_bit_int.ALL;
 library ieee;
@@ -14,13 +5,13 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity fir_filter is
-generic ( 
-	Win 			: INTEGER 	:= 10		; -- Input bit width
-	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 12		;-- Output bit width
-	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	LFilter  		: INTEGER 	:= 256		); -- Filter length
+	generic ( 
+		Win 			: INTEGER 	; -- Input bit width
+		Wmult			: INTEGER 	;-- Multiplier bit width 2*Win
+		Wadd 			: INTEGER 	;-- Adder width = Wmult+log2(L)-1
+		Wout 			: INTEGER 	;-- Output bit width Win+2
+		BUTTON_HIGH 	: STD_LOGIC ;
+		LFilter  		: INTEGER 	); -- Filter length
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
@@ -97,7 +88,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			o_data  <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-Win-1)));
+			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-(o_data'length-1))));
 			--divide by 128 = shift right 7 bits (2^7=128)			
 		end if;
 	end process p_output;
