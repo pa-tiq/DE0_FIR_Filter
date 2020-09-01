@@ -1,4 +1,5 @@
-L = 256; % tamanho do filtro
+BIT_WIDTH = 10;
+L = 257; % tamanho do filtro tem que ser L+1
 halfFilt = floor(L/2);
 n = -halfFilt:halfFilt;
 
@@ -8,7 +9,7 @@ n = -halfFilt:halfFilt;
 %filter = (hh.*w)/sum(hh.*w);
 
 a = 1; %amplitude
-b = 0.6; %quanto maior, mais fininho, geralmente está em 0.6
+b = 0.15; %quanto maior, mais fininho, geralmente está em 0.15
 w = hamming(L)';
 hh = a*sinc(b*n);
 filter = hh.*w;
@@ -30,7 +31,22 @@ for v = 1:1:5
 end
 
 filtro = round(f1);
-writematrix(filtro,'filtro');
+
+% converter pra binário pra colocar na RAM
+temp = filtro;
+mask = temp < 0;
+temp(mask) = 2^BIT_WIDTH + temp(mask) ;
+binary = dec2bin(temp, BIT_WIDTH);
+
+% gerar os endereços de memória para o arquivo de inicialização da RAM
+h = 0x000:0x100;
+
+% escrever no arquivo
+writematrix(binary,'filtro_binario');
+fid = fopen('enderecos.txt','w');
+fprintf(fid,'%X\r\n',h);
+fclose(fid);
+%writematrix(h,'enderecos');
 
 tiledlayout(1,3);
 nexttile;

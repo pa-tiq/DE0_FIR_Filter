@@ -1,11 +1,3 @@
-DEPTH = 256;                   -- The size of memory in words
-WIDTH = 10;                    -- The size of data in bits
-ADDRESS_RADIX = HEX;          -- The radix for address values
-DATA_RADIX = BIN;             -- The radix for data values
-CONTENT                       -- start of (address : data pairs)
-BEGIN
- -- memory address : data
-
 00 : 0000000000
 01 : 0000000000
 02 : 0000000000
@@ -262,5 +254,3 @@ FC : 0000000001
 FD : 0000000000
 FE : 0000000000
 FF : 0000000000
-
-END;
