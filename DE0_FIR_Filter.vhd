@@ -20,7 +20,7 @@ entity DE0_FIR_Filter is
 		Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
 		Wout 			: INTEGER 	:= 28		;-- Output bit width: between Win and Wadd
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		PATTERN_SIZE	: INTEGER 	:= 32		;
+		PATTERN_SIZE	: INTEGER 	:= 256		;
 		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
 		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
 		LFilter  		: INTEGER 	:= 512		); -- Filter length

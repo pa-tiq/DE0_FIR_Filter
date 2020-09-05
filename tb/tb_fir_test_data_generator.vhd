@@ -7,12 +7,12 @@ use ieee.numeric_std.all;
 
 entity tb_fir_test_data_generator is
 	generic( 
-		Win 			: INTEGER 	:= 10		; -- Input bit width
-		Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-		Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
-		Wout 			: INTEGER 	:= 12		;-- Output bit width
+		Win 			: INTEGER 	:= 10		;-- Input bit width
+		Wmult			: INTEGER 	:= 20    	;-- Multiplier bit width 2*Win
+		Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
+		Wout 			: INTEGER 	:= 28		;-- Output bit width: between Win and Wadd
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		PATTERN_SIZE	: INTEGER 	:= 32		;
+		PATTERN_SIZE	: INTEGER 	:= 256		;
 		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
 		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
 		LFilter  		: INTEGER 	:= 512		); -- Filter length
