@@ -15,34 +15,34 @@ entity fir_filter is
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
-	i_coeff  : in  ARRAY_COEFF							;
+--	i_coeff  : in  ARRAY_COEFF							;
 	i_data   : in  std_logic_vector( Win-1 	downto 0)	;
 	o_data   : out std_logic_vector( Wout-1 downto 0)   );
 end fir_filter;
 
 architecture rtl of fir_filter is
 
---component ram_fir 
---	PORT
---	(
---		address	: IN  STD_LOGIC_VECTOR (7 DOWNTO 0);
---		clock	: IN  STD_LOGIC ;
---		data	: IN  STD_LOGIC_VECTOR (9 DOWNTO 0);
---		wren	: IN  STD_LOGIC ;
---		q		: OUT STD_LOGIC_VECTOR (9 DOWNTO 0)
---	);
---end component;
+component ram_fir 
+	PORT
+	(
+		address	: IN  STD_LOGIC_VECTOR (7 DOWNTO 0);
+		clock	: IN  STD_LOGIC ;
+		data	: IN  STD_LOGIC_VECTOR (9 DOWNTO 0);
+		wren	: IN  STD_LOGIC ;
+		q		: OUT STD_LOGIC_VECTOR (9 DOWNTO 0)
+	);
+end component;
 
---signal address_sig  : STD_LOGIC_VECTOR (7 DOWNTO 0);
---signal data_sig		: STD_LOGIC_VECTOR (9 DOWNTO 0) := (others => '0');
---signal wren_sig		: STD_LOGIC := '0';
---signal q_sig		: STD_LOGIC_VECTOR (9 DOWNTO 0);
+signal address_sig  : STD_LOGIC_VECTOR (7 DOWNTO 0);
+signal data_sig		: STD_LOGIC_VECTOR (9 DOWNTO 0) := (others => '0');
+signal wren_sig		: STD_LOGIC := '0';
+signal q_sig		: STD_LOGIC_VECTOR (9 DOWNTO 0);
 
 type t_data    is array (0 to Lfilter-1) 	 of signed(Win-1   downto 0);
 type t_mult    is array (0 to Lfilter-1) 	 of signed(Wmult-1 downto 0);
 type t_add_st0 is array (0 to (LFilter/2)-1) of signed(Wadd-1  downto 0);
 
-signal coeff     : t_data				;
+--signal coeff     : t_data				;
 signal data      : t_data				;
 signal mult      : t_mult				;
 signal add_st0   : t_add_st0			;
@@ -50,24 +50,29 @@ signal add_st1   : signed(Wadd downto 0);
 
 begin
 
-	--ram_fir_inst : ram_fir PORT MAP (
-	--	address	 => address_sig,
-	--	clock	 => clk,
-	--	data	 => data_sig,
-	--	wren	 => wren_sig,
-	--	q		 => q_sig
-	--);
+	ram_fir_inst : ram_fir PORT MAP (
+		address	 => address_sig,
+		clock	 => clk,
+		data	 => data_sig,
+		wren	 => wren_sig,
+		q		 => q_sig
+	);
 		
 	p_input : process (reset,clk)
+		--variable control  	: unsigned(7 downto 0):= (others=>'0');
 	begin
 		if(reset=BUTTON_HIGH) then
 			data   		<= (others=>(others=>'0'));
-			coeff  		<= (others=>(others=>'0'));			
+			--coeff  		<= (others=>(others=>'0'));			
+			--data_sig	<= (others=>'0');
+			--control 	:= (others=>'0');
 		elsif(rising_edge(clk)) then
 			data <= signed(i_data)&data(0 to data'length-2);
-			for k in 0 to Lfilter-1 loop
-				coeff(k)  <= signed(i_coeff(k));
-			end loop;				  
+			--for k in 0 to Lfilter-1 loop
+			--	coeff(k)  <= signed(q_sig);
+			--	control := control + 1;
+			--	address_sig <= std_logic_vector(control);
+			--end loop;				  
 		end if;
 	end process p_input;
 
@@ -75,10 +80,11 @@ begin
 	begin
 		if(reset=BUTTON_HIGH) then
 			mult <= (others=>(others=>'0'));
-			--address_sig <= (others=>'0');
+			address_sig <= (others=>'0');
 		elsif(rising_edge(clk)) then
 			for k in 0 to Lfilter-1 loop
-				mult(k) <= data(k) * coeff(k);
+				address_sig <= std_logic_vector(to_unsigned(k, address_sig'length));
+				mult(k) <= data(k) * signed(q_sig);
 			end loop;
 		end if;
 	end process p_mult;

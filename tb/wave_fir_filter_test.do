@@ -19,6 +19,7 @@ add wave -noupdate -format Logic -radix unsigned /tb_fir_filter_test/u_fir_filte
 add wave -noupdate -format Literal -radix hexadecimal /tb_fir_filter_test/u_fir_filter_test/o_data_buffer
 add wave -noupdate -format Literal -radix unsigned /tb_fir_filter_test/u_fir_filter_test/o_test_add
 add wave -noupdate -format Literal -radix unsigned /tb_fir_filter_test/u_fir_filter_test/coeff
+add wave -noupdate -format Literal -radix unsigned /tb_fir_filter_test/u_fir_filter_test/w_data_test
 add wave -noupdate -format Literal -radix unsigned /tb_fir_filter_test/u_fir_filter_test/fir_output
 add wave -noupdate -format Analog-Step -height 50 -max 63.0 -min -0.0 -radix decimal /tb_fir_filter_test/u_fir_filter_test/w_data_filter
 TreeUpdate [SetDefaultTree]

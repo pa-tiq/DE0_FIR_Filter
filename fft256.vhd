@@ -37,10 +37,9 @@ USE ieee.numeric_std.ALL;
 USE ieee.std_logic_signed.ALL;
 -- --------------------------------------------------------
 ENTITY fft256 IS   ------> Interface
-generic ( 
-	Win 			: INTEGER 	:= 7		; -- Input bit width
-	LFilter  		: INTEGER 	:= 2048		;
-	Log2LFilter     : INTEGER   := 11       ); -- Filter length
+generic ( 	
+	LFilter  		: INTEGER 	;
+	Log2LFilter     : INTEGER   ); -- Filter length
 PORT (
 	clk, reset 			: IN  STD_LOGIC; 	-- Clock and reset
 	xr_in, xi_in   		: IN  S16; 		 	-- Real and imag. input
@@ -111,7 +110,7 @@ BEGIN
 		IF falling_edge(clk) THEN
 			--sin <= sin_rom(w); -- Read from ROM
 			w_sen := w;
-			while(w_sen>sin_rom'length-1) loop
+			while(w_sen>(sin_rom'length-1)) loop
 				w_sen := (sin_rom'length-1) - (w_sen - (sin_rom'length-1));
 				if (w_sen < 0) then
 					w_sen := -w_sen;
@@ -144,12 +143,12 @@ BEGIN
 		VARIABLE tr, ti : S16S := (others => '0');
 		VARIABLE slv, rslv : STD_LOGIC_VECTOR(0 TO ldN-1);
 	BEGIN	
-		IF reset = '0' THEN           -- Asynchronous reset
+		IF reset = '0' THEN  -- Asynchronous reset
 			s <= start;
 			fftr <= (others => '0');
 			ffti <= (others => '0');
 		ELSIF rising_edge(clk) THEN
-			CASE s IS                 -- Next State assignments
+			CASE s IS   -- Next State assignments
 				WHEN start =>
 					s <= load;
 					count := 0;
@@ -219,7 +218,9 @@ BEGIN
 						rslv(i) := slv(ldn-i-1);
 					END LOOP;
 					rcount := CONV_INTEGER('0' & rslv);
-					fftr <= std_logic_vector(xr(rcount)); 
+					--fftr <= std_logic_vector('0' & (xr(rcount)(fftr'length-2 downto 0))); 
+					--ffti <= std_logic_vector('0' & (xi(rcount)(fftr'length-2 downto 0)));
+					fftr <= std_logic_vector(xr(rcount));
 					ffti <= std_logic_vector(xi(rcount));
 					count := count + 1;
 					IF count >= N THEN  s <= done;

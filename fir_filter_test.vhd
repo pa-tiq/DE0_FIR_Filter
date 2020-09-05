@@ -93,6 +93,11 @@ architecture rtl of fir_filter_test is
 	--	6,5,4,4,3,3,2,2,1,1,0,0,0,-1,-1,-2,-2,-2,-2,-3,-3,-3,-3,-4,-4,-4,-4,-4,-4,-4,-4,
 	--	-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-3,-3,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-2,-1,-1,
 	--	-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0);
+
+	-- L=512 RANGE -512 TO 511 (1)
+	constant COEFF_ARRAY : T_COEFF_INPUT := (
+		0,0,0,0,0,-1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,-1,-1,-1,-1,0,0,0,0,0,1,1,1,1,0,0,0,0,-1,-1,-1,-1,-1,-1,0,0,0,1,1,1,1,1,1,0,0,-1,-1,-1,-2,-2,-1,-1,-1,0,1,1,2,2,2,2,1,1,0,-1,-1,-2,-2,-2,-2,-2,-1,0,1,1,2,3,3,3,2,1,0,-1,-2,-3,-3,-3,-3,-3,-2,-1,1,2,3,4,4,4,3,2,1,-1,-2,-4,-5,-5,-5,-4,-3,-1,1,2,4,5,6,6,5,3,2,-1,-3,-5,-6,-7,-7,-6,-4,-2,0,3,5,7,8,8,7,5,3,0,-3,-6,-8,-9,-9,-8,-6,-3,0,4,7,9,11,11,10,8,4,0,-4,-8,-11,-13,-13,-12,-9,-6,-1,4,9,12,15,15,14,11,7,2,-4,-10,-14,-17,-18,-17,-14,-9,-3,4,11,17,21,22,21,17,11,4,-5,-13,-20,-25,-27,-26,-22,-15,-6,5,15,24,31,34,33,28,20,8,-5,-18,-30,-40,-45,-44,-39,-28,-13,5,24,41,55,63,64,57,43,21,-5,-34,-63,-87,-104,-110,-104,-82,-46,5,68,139,216,292,363,424,471,501,511,511,501,471,424,363,292,216,139,68,5,-46,-82,-104,-110,-104,-87,-63,-34,-5,21,43,57,64,63,55,41,24,5,-13,-28,-39,-44,-45,-40,-30,-18,-5,8,20,28,33,34,31,24,15,5,-6,-15,-22,-26,-27,-25,-20,-13,-5,4,11,17,21,22,21,17,11,4,-3,-9,-14,-17,-18,-17,-14,-10,-4,2,7,11,14,15,15,12,9,4,-1,-6,-9,-12,-13,-13,-11,-8,-4,0,4,8,10,11,11,9,7,4,0,-3,-6,-8,-9,-9,-8,-6,-3,0,3,5,7,8,8,7,5,3,0,-2,-4,-6,-7,-7,-6,-5,-3,-1,2,3,5,6,6,5,4,2,1,-1,-3,-4,-5,-5,-5,-4,-2,-1,1,2,3,4,4,4,3,2,1,-1,-2,-3,-3,-3,-3,-3,-2,-1,0,1,2,3,3,3,2,1,1,0,-1,-2,-2,-2,-2,-2,-1,-1,0,1,1,2,2,2,2,1,1,0,-1,-1,-1,-2,-2,-1,-1,-1,0,0,1,1,1,1,1,1,0,0,0,-1,-1,-1,-1,-1,-1,0,0,0,0,1,1,1,1,0,0,0,0,0,-1,-1,-1,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,-1,0,0,0,0,0
+	);
 	
 	-- L=2048 RANGE -127 to 126 HAMMING
 	--constant COEFF_ARRAY : T_COEFF_INPUT := (
@@ -166,34 +171,34 @@ begin
 
 	w_data_filter <= fir_output;
 
-	--smachine_1: process (reset,clk)
-	--begin
-	--	if rising_edge(clk) then
-	--		if (reset = BUTTON_HIGH) then
-	--			state <= ST_RESET;
-	--		else
-	--			state <= next_state;
-	--		end if;
-	--	end if;
-	--end process smachine_1;
+	smachine_1: process (reset,clk)
+	begin
+		if rising_edge(clk) then
+			if (reset = BUTTON_HIGH) then
+				state <= ST_RESET;
+			else
+				state <= next_state;
+			end if;
+		end if;
+	end process smachine_1;
 
-	--smachine_2: process(state, IsStartup)
-	--begin
-	--	next_state <= state;
-	--	case state is
-	--		when ST_RESET =>
-	--			if (IsStartup = '1') then
-	--				next_state <= ST_LOAD_COEFF;
-	--			else
-	--				next_state <= ST_CONTINUE;
-	--			end if;
-	--		when ST_LOAD_COEFF =>
-	--			if (IsStartup = '0') then
-	--				next_state <= ST_CONTINUE;
-	--			end if;
-	--		when others => null;					
-	--	end case;
-	--end process smachine_2;
+	smachine_2: process(state, IsStartup)
+	begin
+		next_state <= state;
+		case state is
+			when ST_RESET =>
+				if (IsStartup = '1') then
+					next_state <= ST_LOAD_COEFF;
+				else
+					next_state <= ST_CONTINUE;
+				end if;
+			when ST_LOAD_COEFF =>
+				if (IsStartup = '0') then
+					next_state <= ST_CONTINUE;
+				end if;
+			when others => null;					
+		end case;
+	end process smachine_2;
 
 	--p_coeff : process (reset,clk)
 	--	variable first_time : std_logic := '0';
@@ -208,15 +213,15 @@ begin
 	--	end if;
 	--end process p_coeff;	
 	
-	--p_coeff : process (state)
-	--begin
-	--	if(state = ST_LOAD_COEFF) then
-	--		for k in 0 to Lfilter-1 loop
-	--			coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
-	--		end loop;
-	--		IsStartup <='0';
-	--	end if;
-	--end process p_coeff;
+	p_coeff : process (state)
+	begin
+		if(state = ST_LOAD_COEFF) then
+			for k in 0 to Lfilter-1 loop
+				coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
+			end loop;
+			IsStartup <='0';
+		end if;
+	end process p_coeff;
 
 	u_fir_test_data_generator : fir_test_data_generator
 	generic map( 
@@ -248,8 +253,8 @@ begin
 		reset       => reset      	 	,
 		i_coeff     => coeff 			,
 		i_data      => w_data_test 		,
-		o_data     	=> fir_output		);
-
+		o_data     	=> o_data_buffer		);
+		
 	u_fir_output_buffer : fir_output_buffer 
 	generic map( 
 		Win 		 => Win				, -- Input bit width
@@ -265,7 +270,7 @@ begin
 		i_write_enable      => w_write_enable     ,
 		i_data              => w_data_filter      ,
 		i_read_request      => i_read_request     ,
-		o_data              => o_data_buffer      ,
+		o_data              => fir_output      	,
 		o_test_add          => o_test_add         );
 
 end rtl;

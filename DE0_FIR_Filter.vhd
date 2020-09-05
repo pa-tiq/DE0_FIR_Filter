@@ -13,20 +13,17 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- 2^8 = 256 -> log2(256) = 8
--- 2*9 = 18 -> 18 + 8 - 1 = 25
-
 entity DE0_FIR_Filter is
 	generic ( 
 		Win 			: INTEGER 	:= 10		;-- Input bit width
-		Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*Win
-		Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
-		Wout 			: INTEGER 	:= 20		;-- Output bit width: between Win and Wadd
+		Wmult			: INTEGER 	:= 20    	;-- Multiplier bit width 2*Win
+		Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
+		Wout 			: INTEGER 	:= 28		;-- Output bit width: between Win and Wadd
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
 		PATTERN_SIZE	: INTEGER 	:= 32		;
 		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
 		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
-		LFilter  		: INTEGER 	:= 256		); -- Filter length
+		LFilter  		: INTEGER 	:= 512		); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
 	pad_i_clock_50                             : in    std_logic;  --	50 MHz
@@ -210,10 +207,40 @@ pad_o_hex1_dp     <= '0';
 pad_o_hex2_dp     <= '0';
 pad_o_hex3_dp     <= not w_test_add(4); -- MSB for address
 
-
 w_pattern_sel        <= pad_i_sw(9);
-w_start_generation   <= not pad_i_button(2);
-w_read_request       <= not pad_i_button(1);
+--w_start_generation   <= not pad_i_button(2);
+--w_read_request       <= not pad_i_button(1);
+
+---------------------------------------- TESTBENCH
+p_input : process (w_rstb,w_clk)
+variable control : unsigned(9 downto 0):= (others=>'0');
+begin
+	if(w_rstb='0') then
+		w_start_generation           <= '0';
+		control := (others => '0');
+	elsif(rising_edge(w_clk)) then
+		if(control=10) then 
+			w_start_generation       <= '1';
+		else
+			w_start_generation       <= '0';
+		end if;
+		control := control + 1;
+		
+		if(control>100)then
+			w_read_request           <= control(3);
+		else
+			w_read_request           <= '0';
+		end if;
+	end if;
+end process p_input;
+-----------------------------------------------------
+
+pad_b_gpio1_d(0) <= data_buffer(Wout-1);
+pad_b_gpio1_d(1) <= data_buffer(Wout-2);
+pad_b_gpio1_d(2) <= data_buffer(Wout-3);
+pad_b_gpio1_d(3) <= data_buffer(Wout-4);
+pad_b_gpio1_d(4) <= data_buffer(Wout-5);
+pad_b_gpio1_d(5) <= data_buffer(Wout-6);
 
 u_fir_filter_test : fir_filter_test
 generic map(
@@ -298,6 +325,6 @@ port map(
 	pad_o_gpio0_clkout    <= "00";
 	pad_b_gpio0_d         <= (others=>'Z');
 	pad_o_gpio1_clkout    <= "00";
-	pad_b_gpio1_d         <= (others=>'Z');
+	pad_b_gpio1_d(31 downto 1)          <= (others=>'Z');
 
 end architecture rtl;

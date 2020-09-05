@@ -21,6 +21,14 @@ entity tb_fir_test_data_generator is
 architecture behave of tb_fir_test_data_generator is
 
 component fir_test_data_generator 
+generic( 
+	Win 		: INTEGER	; -- Input bit width
+	Wout 		: INTEGER	;-- Output bit width
+	BUTTON_HIGH : STD_LOGIC	;
+	PATTERN_SIZE: INTEGER	;
+	RANGE_LOW	: INTEGER 	; 
+	RANGE_HIGH 	: INTEGER 	;
+	LFilter  	: INTEGER	); -- Filter length
 port (
 	i_clk                   : in  std_logic;
 	i_rstb                  : in  std_logic;
@@ -47,6 +55,14 @@ begin
 	i_rstb  <= '0', '1' after 132 ns;
 
 	u_fir_test_data_generator : fir_test_data_generator 
+	generic map( 
+		Win 		 => Win				, -- Input bit width
+		Wout 		 => Wout			,-- Output bit width
+		BUTTON_HIGH  => BUTTON_HIGH		,
+		PATTERN_SIZE => PATTERN_SIZE	,
+		RANGE_LOW	 => RANGE_LOW		, 
+		RANGE_HIGH 	 => RANGE_HIGH		,
+		LFilter  	 => LFilter			) -- Filter length	
 	port map(
 		i_clk                   => i_clk                   ,
 		i_rstb                  => i_rstb                  ,
