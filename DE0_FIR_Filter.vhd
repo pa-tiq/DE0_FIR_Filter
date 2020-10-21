@@ -325,6 +325,6 @@ port map(
 	pad_o_gpio0_clkout    <= "00";
 	pad_b_gpio0_d         <= (others=>'Z');
 	pad_o_gpio1_clkout    <= "00";
-	pad_b_gpio1_d(31 downto 1)          <= (others=>'Z');
+	pad_b_gpio1_d(31 downto 5)          <= (others=>'Z');
 
 end architecture rtl;

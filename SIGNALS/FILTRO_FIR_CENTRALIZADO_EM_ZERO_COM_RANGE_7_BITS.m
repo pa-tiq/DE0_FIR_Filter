@@ -9,8 +9,8 @@ n = -halfFilt:halfFilt;
 %filter = (hh.*w)/sum(hh.*w);
 
 a = 1; %amplitude
-b = 0.11; %quanto maior, mais fininho, geralmente está em 0.15
-w = hamming(L)';
+b = 0.1; %quanto maior, mais fininho, geralmente está em 0.15
+w = blackman(L)';
 hh = a*sinc(b*n);
 filter = hh.*w;
 %fvtool(filter,1);
@@ -32,6 +32,9 @@ end
 
 filtro = round(f1);
 writematrix(filtro,'filtro_2048');
+
+Y = fft(filtro);
+plot(real(Y));
 
 tiledlayout(1,3);
 nexttile;

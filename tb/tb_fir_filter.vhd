@@ -183,53 +183,54 @@ begin
 		variable count 		: integer := 0;
 		variable first_time : std_logic := '0';
 	begin
-		if(first_time='0') then
-			for k in 0 to Lfilter-1 loop
-				i_coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
-			end loop;			
-			for j in 0 to noisy_size-1 loop
-				NOISY(j)  <=  std_logic_vector(to_signed(NOISY_ARRAY(j),Win));
-			end loop;
-			first_time := '1';
-		end if;
+	if(first_time='0') then
+		for k in 0 to Lfilter-1 loop
+			i_coeff(k)  <=  std_logic_vector(to_signed(COEFF_ARRAY(k),Win));
+		end loop;			
+		for j in 0 to noisy_size-1 loop
+			NOISY(j)  <=  std_logic_vector(to_signed(NOISY_ARRAY(j),Win));
+		end loop;
+		first_time := '1';
+	end if;
+	
+	if(reset=BUTTON_HIGH) then
+		i_data  <= (others=>'0');
+		control := (others=>'0'); 
+	elsif(rising_edge(clk)) then
 		
-		if(reset=BUTTON_HIGH) then
-			i_data       <= (others=>'0'); 
-		elsif(rising_edge(clk)) then
-			
-		-- DELTA, STEP ...........
-			if(control=100 and count = 0) then  -- delta
-				i_data       <= ('0',others=>'1');
-			elsif(control(11)='1' and count <3000 ) then  -- step
-				i_data       <= ('0',others=>'1');
-				count := count + 1;
-			else
-				i_data       <= (others=>'0');
-			end if;
-			control := control + 1;
-		------------------------------------------------
+	-- DELTA, STEP ...........
+	--	if(control=100 and count = 0) then  -- delta
+	--		i_data       <= ('0',others=>'1');
+	--	elsif(control(11)='1' and count <3000 ) then  -- step
+	--		i_data       <= ('0',others=>'1');
+	--		count := count + 1;
+	--	else
+	--		i_data       <= (others=>'0');
+	--	end if;
+	--	control := control + 1;
+	------------------------------------------------
 
-		-- DELTA, STEP, STEP, STEP, .......
-		--	if(control=10) then  -- delta
-		--		i_data       <= ('0',others=>'1');
-		--	elsif(control(7)='1') then  -- step
-		--		i_data       <= ('0',others=>'1');
-		--	else
-		--		i_data       <= (others=>'0');
-		--	end if;
-		--	control := control + 1;
-		-------------------------------------------------
-		
-		-- NOISY ANALOG SIGNAL
-		--	if(count < noisy_size) then
-		--		i_data <= NOISY(count);
-		--		count := count + 1;
-		--	else
-		--		i_data <= (others=>'0');
-		--	end if;
-		-------------------------------------------------
-
+	-- DELTA, STEP, STEP, STEP, .......
+		if(control=10) then  -- delta
+			i_data       <= ('0',others=>'1');
+		elsif(control(7)='1') then  -- step
+			i_data       <= ('0',others=>'1');
+		else
+			i_data       <= (others=>'0');
 		end if;
-	end process p_input;
+		control := control + 1;
+	-------------------------------------------------
+	
+	-- NOISY ANALOG SIGNAL
+	--	if(count < noisy_size) then
+	--		i_data <= NOISY(count);
+	--		count := count + 1;
+	--	else
+	--		i_data <= (others=>'0');
+	--	end if;
+	-------------------------------------------------
+
+	end if;
+end process p_input;
 
 end behave;

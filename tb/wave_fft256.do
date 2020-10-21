@@ -6,7 +6,16 @@ add wave -noupdate -format Literal -radix decimal /tb_fft256/xr_in
 add wave -noupdate -format Literal -radix decimal /tb_fft256/xi_in
 add wave -noupdate -format Literal -radix decimal /tb_fft256/fft_valid
 add wave -noupdate -format Literal -radix decimal /tb_fft256/rcount_o
-add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fft256/fftr
+add wave -noupdate -format Literal -radix decimal /tb_fft256/stage_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/gcount_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/i1_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/i2_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/k1_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/k2_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/w_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/dw_o
+add wave -noupdate -format Literal -radix decimal /tb_fft256/wo
+add wave -noupdate -format Analog-Step -height 100 -radix decimal /tb_fft256/fftr_out
 add wave -noupdate -format Analog-Step -height 200 -radix decimal /tb_fft256/ffti
 TreeUpdate [SetDefaultTree]
 quietly WaveActivateNextPane
