@@ -162,7 +162,7 @@ signal w_h3_in              : std_logic_vector(3 downto 0);
 begin
 -- CLOCK and RESET
 w_rstb  <= pad_i_button(0);
-w_clk   <= pad_i_clock_50;
+w_clk   <= pad_i_button(1);
 
 -- LED
 pad_o_ledg(0)  <= '0';
