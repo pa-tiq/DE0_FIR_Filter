@@ -1,12 +1,12 @@
 --UNCOMMENT IF TESTING THIS MODULE EXCLUSIVELY
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
-	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
-END n_bit_int;
+--library ieee;
+--use ieee.std_logic_1164.all;
+--use ieee.numeric_std.all;
+--
+--PACKAGE n_bit_int IS
+--	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
+--	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+--END n_bit_int;
 ------------------------------------------
 
 LIBRARY work;
@@ -33,7 +33,7 @@ entity fir_filter_test is
 		i_start_generation    : in  std_logic;
 		i_read_request        : in  std_logic;
 		o_data_buffer         : out std_logic_vector( Wout-1 downto 0); -- to seven segment
-		o_test_add            : out std_logic_vector( 4 downto 0)); -- test read address
+		o_test_add            : out std_logic_vector( Win-1 downto 0)); -- test read address
 end fir_filter_test;
 
 architecture rtl of fir_filter_test is
@@ -106,7 +106,7 @@ architecture rtl of fir_filter_test is
 		i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR 
 		i_read_request          : in  std_logic;
 		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
-		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
+		o_test_add              : out std_logic_vector( Win-1 downto 0)); -- test read address
 	end component;
 
 	signal w_write_enable  : std_logic;
@@ -220,7 +220,7 @@ begin
 		i_clk               => clk                ,
 		i_rstb              => reset              ,
 		i_write_enable      => w_write_enable     ,
-		i_data              => w_data_filter      ,
+		i_data              => fir_output         ,
 		i_read_request      => i_read_request     ,
 		o_data              => o_data_buffer      ,
 		o_test_add          => o_test_add         );

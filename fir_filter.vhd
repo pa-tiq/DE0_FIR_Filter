@@ -103,8 +103,7 @@ begin
 		if(reset=BUTTON_HIGH) then
 			o_data  <= (others=>'0');
 		elsif(rising_edge(clk)) then
-			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-Win-1)));
-			--divide by 128 = shift right 7 bits (2^7=128)			
+			o_data  <= std_logic_vector(add_st1(Wadd downto (Wadd-(o_data'length-1))));		
 		end if;
 	end process p_output;
 

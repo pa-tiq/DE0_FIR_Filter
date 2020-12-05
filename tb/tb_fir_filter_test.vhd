@@ -7,9 +7,9 @@ entity tb_fir_filter_test is
 		Win 			: INTEGER 	:= 9		; -- Input bit width
 		Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
 		Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
-		Wout 			: INTEGER 	:= 11		;-- Output bit width
+		Wout 			: INTEGER 	:= 12		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		PATTERN_SIZE	: INTEGER 	:= 32		;
+		PATTERN_SIZE	: INTEGER 	:= 256		;
 		RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
 		RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
 		LFilter  		: INTEGER 	:= 256		); -- Filter length
@@ -35,7 +35,7 @@ port (
 	i_start_generation      : in  std_logic;
 	i_read_request          : in  std_logic;
 	o_data_buffer           : out std_logic_vector( Wout-1 downto 0); -- to seven segment
-	o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
+	o_test_add              : out std_logic_vector( Win-1 downto 0)); -- test read address
 end component;
 
 signal clk                     : std_logic:='0';
@@ -44,7 +44,7 @@ signal i_pattern_sel           : std_logic:='1';  -- '0'=> delta; '1'=> step
 signal i_start_generation      : std_logic;
 signal i_read_request          : std_logic;
 signal o_data_buffer           : std_logic_vector( Wout-1 downto 0); -- to seven segment
-signal o_test_add              : std_logic_vector( 4 downto 0); -- test read address
+signal o_test_add              : std_logic_vector( Win-1 downto 0); -- test read address
 
 begin
 
@@ -72,7 +72,7 @@ port map(
 	o_test_add           => o_test_add           );	
 
 p_input : process (reset,clk)
-variable control : unsigned(9 downto 0):= (others=>'0');
+variable control : unsigned(14 downto 0):= (others=>'0');
 begin
 	if(reset='0') then
 		i_start_generation           <= '0';

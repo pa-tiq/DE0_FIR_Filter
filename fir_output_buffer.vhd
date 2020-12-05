@@ -33,7 +33,7 @@ entity fir_output_buffer is
 		i_data                  : in  std_logic_vector( Wout-1 downto 0); -- from FIR
 		i_read_request          : in  std_logic;
 		o_data                  : out std_logic_vector( Wout-1 downto 0); -- to seven segment
-		o_test_add              : out std_logic_vector( 4 downto 0)); -- test read address
+		o_test_add              : out std_logic_vector( Win-1 downto 0)); -- test read address
 end fir_output_buffer;
 
 architecture rtl of fir_output_buffer is
@@ -102,6 +102,6 @@ architecture rtl of fir_output_buffer is
 			end if;
 	end process p_memory;
 
-	o_test_add  <= std_logic_vector(to_unsigned(r_read_add,5));
+	o_test_add  <= std_logic_vector(to_unsigned(r_read_add,Win));
 
 end rtl;

@@ -6,17 +6,28 @@ use ieee.numeric_std.all;
 
 entity tb_fir_output_buffer is
 	generic( 
-		Win 			: INTEGER 	:= 10		; -- Input bit width
-		Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-		Wadd 			: INTEGER 	:= 26		;-- Adder width = Wmult+log2(L)-1
+		Win 			: INTEGER 	:= 9		; -- Input bit width
+		Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
+		Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
 		Wout 			: INTEGER 	:= 12		;-- Output bit width
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		LFilter  		: INTEGER 	:= 512		);-- Filter length
+		PATTERN_SIZE	: INTEGER 	:= 32		;
+		RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
+		RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
+		LFilter  		: INTEGER 	:= 256		); -- Filter length
 end tb_fir_output_buffer;
 
 architecture behave of tb_fir_output_buffer is
 
 component fir_output_buffer 
+generic( 
+	Win 		: INTEGER	; -- Input bit width
+	Wout 		: INTEGER	; -- Output bit width
+	BUTTON_HIGH : STD_LOGIC	;
+	PATTERN_SIZE: INTEGER	;
+	RANGE_LOW	: INTEGER 	; 
+	RANGE_HIGH 	: INTEGER 	;
+	LFilter  	: INTEGER	);
 port (
 	i_clk                   : in  std_logic;
 	i_rstb                  : in  std_logic;
@@ -41,6 +52,14 @@ i_clk   <= not i_clk after 5 ns;
 i_rstb  <= '0', '1' after 132 ns;
 
 u_fir_output_buffer : fir_output_buffer 
+generic map( 
+	Win 		 => Win				, -- Input bit width
+	Wout 		 => Wout			,-- Output bit width
+	BUTTON_HIGH  => BUTTON_HIGH		,
+	PATTERN_SIZE => PATTERN_SIZE	,
+	RANGE_LOW	 => RANGE_LOW		, 
+	RANGE_HIGH 	 => RANGE_HIGH		,
+	LFilter  	 => LFilter			) -- Filter length
 port map(
 	i_clk                   => i_clk                   ,
 	i_rstb                  => i_rstb                  ,
