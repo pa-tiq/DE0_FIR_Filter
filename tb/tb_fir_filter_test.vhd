@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0);
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0);
 	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
 END n_bit_int;
 
@@ -53,16 +53,16 @@ clk   <= not clk after 5 ns;
 reset  <= '0', '1' after 132 ns;
 
 u_fir_filter_test : fir_filter_test
---generic map( 
---	Win 	   	 => Win			 ,
---	Wmult 	   	 => Wmult		 ,
---	Wadd 	   	 => Wadd		 ,
---	Wout 	  	 => Wout		 ,
---	LFilter 	 => LFilter		 ,
---	RANGE_LOW 	 => RANGE_LOW	 ,
---	RANGE_HIGH 	 => RANGE_HIGH	 ,
---	BUTTON_HIGH  => BUTTON_HIGH	 ,
---	PATTERN_SIZE => PATTERN_SIZE )
+generic map( 
+	Win 	   	 => Win			 ,
+	Wmult 	   	 => Wmult		 ,
+	Wadd 	   	 => Wadd		 ,
+	Wout 	  	 => Wout		 ,
+	LFilter 	 => LFilter		 ,
+	RANGE_LOW 	 => RANGE_LOW	 ,
+	RANGE_HIGH 	 => RANGE_HIGH	 ,
+	BUTTON_HIGH  => BUTTON_HIGH	 ,
+	PATTERN_SIZE => PATTERN_SIZE )
 port map(
 	clk              	 => clk                  ,
 	reset                => reset                ,

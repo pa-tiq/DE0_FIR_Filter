@@ -15,12 +15,12 @@ use ieee.numeric_std.all;
 
 entity fir_filter is
 generic ( 
-	Win 			: INTEGER 	:= 10		; -- Input bit width
-	Wmult			: INTEGER 	:= 20		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 27		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 12		;-- Output bit width
-	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	LFilter  		: INTEGER 	:= 256		); -- Filter length
+	Win 			: INTEGER 		; -- Input bit width
+	Wmult			: INTEGER 		;-- Multiplier bit width 2*W1
+	Wadd 			: INTEGER 		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 		;-- Output bit width
+	BUTTON_HIGH 	: STD_LOGIC 	;
+	LFilter  		: INTEGER 		); -- Filter length
 port (
 	clk      : in  std_logic							;
 	reset    : in  std_logic							;
