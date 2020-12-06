@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 PACKAGE n_bit_int IS
-	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(8 DOWNTO 0)	; --Win-1
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
 	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE;
 END n_bit_int;
 
@@ -18,15 +18,15 @@ use ieee.numeric_std.all;
 
 entity DE0_FIR_Filter is
 generic( 
-	Win 			: INTEGER 	:= 9		; -- Input bit width
-	Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
-	Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
-	Wout 			: INTEGER 	:= 12		;-- Output bit width
+	Win 			: INTEGER 	:= 10		;-- Input bit width
+	Wmult			: INTEGER 	:= 20    	;-- Multiplier bit width 2*Win
+	Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
+	Wout 			: INTEGER 	:= 28		;-- Output bit width: between Win and Wadd
 	BUTTON_HIGH 	: STD_LOGIC := '0'		;
-	PATTERN_SIZE	: INTEGER 	:= 256		;
-	RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
-	RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
-	LFilter  		: INTEGER 	:= 256		); -- Filter length
+	PATTERN_SIZE	: INTEGER 	:= 512		;
+	RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
+	RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
+	LFilter  		: INTEGER 	:= 512		); -- Filter length
 port (
 	-- ////////////////////	clock input	 	////////////////////	 
 	pad_i_clock_50                             : in    std_logic;  --	50 MHz
@@ -208,10 +208,16 @@ pad_o_hex1_dp     <= '0';
 pad_o_hex2_dp     <= '0';
 pad_o_hex3_dp     <= not w_test_add(4); -- MSB for address
 
-
 w_pattern_sel        <= pad_i_sw(9);
 w_start_generation   <= not pad_i_button(2);
 w_read_request       <= not pad_i_button(1);
+
+pad_b_gpio1_d(0) <= data_buffer(0);
+--pad_b_gpio1_d(1) <= data_buffer(Wout-2);
+--pad_b_gpio1_d(2) <= data_buffer(Wout-3);
+--pad_b_gpio1_d(3) <= data_buffer(Wout-4);
+--pad_b_gpio1_d(4) <= data_buffer(Wout-5);
+--pad_b_gpio1_d(5) <= data_buffer(Wout-6);
 
 u_fir_filter_test : fir_filter_test
 generic map(
@@ -296,6 +302,7 @@ port map(
 	pad_o_gpio0_clkout    <= "00";
 	pad_b_gpio0_d         <= (others=>'Z');
 	pad_o_gpio1_clkout    <= "00";
-	pad_b_gpio1_d         <= (others=>'Z');
+	--pad_b_gpio1_d(31 downto 5) <= (others=>'Z');
+	pad_b_gpio1_d(31 downto 1) <= (others=>'Z');
 
 end architecture rtl;

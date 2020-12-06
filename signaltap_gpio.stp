@@ -1,0 +1,75 @@
+<session jtag_chain="USB-Blaster [USB-0]" jtag_device="@1: EP3C16 (0x020F20DD)" sof_file="" top_level_entity="DE0_FIR_Filter">
+  <display_tree gui_logging_enabled="0">
+    <display_branch instance="auto_signaltap_0" signal_set="USE_GLOBAL_TEMP" trigger="USE_GLOBAL_TEMP"/>
+  </display_tree>
+  <instance entity_name="sld_signaltap" is_auto_node="yes" is_expanded="true" name="auto_signaltap_0" source_file="sld_signaltap.vhd">
+    <node_ip_info instance_id="0" mfg_id="110" node_id="0" version="6"/>
+    <signal_set global_temp="1" is_expanded="true" name="signal_set: 2020/12/05 20:56:54  #0">
+      <clock name="pad_i_clock_50" polarity="posedge" tap_mode="classic"/>
+      <config ram_type="M4K" reserved_data_nodes="0" reserved_storage_qualifier_nodes="0" reserved_trigger_nodes="0" sample_depth="128" trigger_in_enable="no" trigger_out_enable="no"/>
+      <top_entity/>
+      <signal_vec>
+        <trigger_input_vec>
+          <wire name="pad_b_gpio1_d[0]" tap_mode="classic" type="bidir pin"/>
+        </trigger_input_vec>
+        <data_input_vec>
+          <wire name="pad_b_gpio1_d[0]" tap_mode="classic" type="bidir pin"/>
+        </data_input_vec>
+        <storage_qualifier_input_vec>
+          <wire name="pad_b_gpio1_d[0]" tap_mode="classic" type="bidir pin"/>
+        </storage_qualifier_input_vec>
+      </signal_vec>
+      <presentation>
+        <data_view>
+          <net is_signal_inverted="no" name="pad_b_gpio1_d[0]"/>
+        </data_view>
+        <setup_view>
+          <net is_signal_inverted="no" name="pad_b_gpio1_d[0]"/>
+        </setup_view>
+      </presentation>
+      <trigger CRC="352AA0A4" attribute_mem_mode="false" gap_record="true" global_temp="1" is_expanded="true" name="trigger: 2020/12/05 20:56:54  #1" position="pre" power_up_trigger_mode="false" record_data_gap="true" segment_size="1" storage_mode="off" storage_qualifier_disabled="no" storage_qualifier_port_is_pin="false" storage_qualifier_port_name="auto_stp_external_storage_qualifier" storage_qualifier_port_tap_mode="classic" trigger_in="dont_care" trigger_out="active high" trigger_type="circular">
+        <power_up_trigger position="pre" storage_qualifier_disabled="no" trigger_in="dont_care" trigger_out="active high"/>
+        <events use_custom_flow_control="no">
+          <level enabled="yes" name="condition1" type="basic">
+            <power_up enabled="yes">
+            </power_up>
+            <op_node/>
+          </level>
+        </events>
+        <storage_qualifier_events>
+          <transitional>0
+            
+            <pwr_up_transitional>0
+            
+            </pwr_up_transitional>
+          </transitional>
+          <storage_qualifier_level type="basic">
+            <power_up>
+            </power_up>
+            <op_node/>
+          </storage_qualifier_level>
+          <storage_qualifier_level type="basic">
+            <power_up>
+            </power_up>
+            <op_node/>
+          </storage_qualifier_level>
+          <storage_qualifier_level type="basic">
+            <power_up>
+            </power_up>
+            <op_node/>
+          </storage_qualifier_level>
+        </storage_qualifier_events>
+      </trigger>
+    </signal_set>
+    <position_info>
+      <single attribute="active tab" value="1"/>
+    </position_info>
+  </instance>
+  <mnemonics/>
+  <static_plugin_mnemonics/>
+  <global_info>
+    <single attribute="active instance" value="0"/>
+    <single attribute="lock mode" value="36110"/>
+    <multi attribute="window position" size="9" value="1424,688,398,124,356,50,124,0,51"/>
+  </global_info>
+</session>

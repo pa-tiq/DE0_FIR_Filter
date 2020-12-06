@@ -2,17 +2,30 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+PACKAGE n_bit_int IS
+	SUBTYPE COEFF_TYPE IS STD_LOGIC_VECTOR(9 DOWNTO 0)	; --Win-1
+	TYPE ARRAY_COEFF IS ARRAY (NATURAL RANGE <>) OF COEFF_TYPE; --LFilter-1
+END n_bit_int;
+
+
+LIBRARY work;
+USE work.n_bit_int.ALL;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 entity tb_fir_filter_test is
 	generic( 
-		Win 			: INTEGER 	:= 9		; -- Input bit width
-		Wmult			: INTEGER 	:= 18		;-- Multiplier bit width 2*W1
-		Wadd 			: INTEGER 	:= 25		;-- Adder width = Wmult+log2(L)-1
-		Wout 			: INTEGER 	:= 12		;-- Output bit width
+		Win 			: INTEGER 	:= 10		;-- Input bit width
+		Wmult			: INTEGER 	:= 20    	;-- Multiplier bit width 2*Win
+		Wadd 			: INTEGER 	:= 28		;-- Adder width = Wmult+log2(L)-1
+		Wout 			: INTEGER 	:= 28		;-- Output bit width: between Win and Wadd
 		BUTTON_HIGH 	: STD_LOGIC := '0'		;
-		PATTERN_SIZE	: INTEGER 	:= 256		;
-		RANGE_LOW 		: INTEGER 	:= -256		; --pattern range: power of 2
-		RANGE_HIGH 		: INTEGER 	:= 255		; --must change pattern too
-		LFilter  		: INTEGER 	:= 256		); -- Filter length
+		PATTERN_SIZE	: INTEGER 	:= 512		;
+		RANGE_LOW 		: INTEGER 	:= -512		; --pattern range: power of 2
+		RANGE_HIGH 		: INTEGER 	:= 511		; --must change pattern too
+		LFilter  		: INTEGER 	:= 512		); -- Filter length
 end tb_fir_filter_test;
 
 architecture behave of tb_fir_filter_test is
