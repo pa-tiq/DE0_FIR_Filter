@@ -89,8 +89,8 @@ port (
 	o_pulse                     : out std_logic);
 end component;
 
-signal r_write_counter        : integer range 0 to PATTERN_SIZE-1; 
-signal r_write_counter_ena    : std_logic;
+signal r_write_counter        : integer range 0 to PATTERN_SIZE-1 := 0;
+signal r_write_counter_ena    : std_logic := '1';
 signal w_start_pulse          : std_logic;
 
 begin
@@ -102,16 +102,32 @@ begin
 		i_input                     => i_start_generation          ,
 		o_pulse                     => w_start_pulse               );
 
+--	p_write_counter : process (i_rstb,i_clk)
+--	begin
+--		if(i_rstb=BUTTON_HIGH) then
+--			r_write_counter        <= PATTERN_SIZE-1;
+--			r_write_counter_ena    <= '0';
+--		elsif(rising_edge(i_clk)) then
+--			if(w_start_pulse='1') then
+--				r_write_counter       <= 0;
+--				w_start_pulse <= '0';
+--				r_write_counter_ena   <= '1';
+--			elsif(r_write_counter < PATTERN_SIZE-1) then
+--				r_write_counter       <= r_write_counter + 1;
+--				r_write_counter_ena   <= '1';
+--			else
+--				r_write_counter_ena   <= '0';
+--			end if;
+--		end if;
+--	end process p_write_counter;
+
 	p_write_counter : process (i_rstb,i_clk)
 	begin
 		if(i_rstb=BUTTON_HIGH) then
-			r_write_counter        <= PATTERN_SIZE-1;
-			r_write_counter_ena    <= '0';
+			r_write_counter        <= 0;
+			r_write_counter_ena    <= '1';
 		elsif(rising_edge(i_clk)) then
-			if(w_start_pulse='1') then
-				r_write_counter       <= 0;
-				r_write_counter_ena   <= '1';
-			elsif(r_write_counter < PATTERN_SIZE-1) then
+			if(r_write_counter < PATTERN_SIZE-1) then
 				r_write_counter       <= r_write_counter + 1;
 				r_write_counter_ena   <= '1';
 			else

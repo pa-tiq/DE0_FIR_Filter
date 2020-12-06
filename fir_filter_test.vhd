@@ -108,16 +108,17 @@ architecture rtl of fir_filter_test is
 	signal w_write_enable  : std_logic;
 	signal w_data_test     : std_logic_vector( Win-1 downto 0);	
 	signal coeff           : ARRAY_COEFF(0 to Lfilter-1);
-	signal w_data_filter   : std_logic_vector( Wout-1 downto 0);
-	signal fir_output      : std_logic_vector( Wout-1 downto 0);
+	--signal w_data_filter   : std_logic_vector( Wout-1 downto 0);
+	--signal fir_output      : std_logic_vector( Wout-1 downto 0);
 
 	type state_type is(ST_RESET, ST_LOAD_COEFF, ST_CONTINUE);
-	signal state, next_state	: state_type;
+	signal state	   : state_type := ST_RESET;
+	signal next_state  : state_type ;
 	signal IsStartup : std_logic := '1';
 
 begin
 
-	w_data_filter <= fir_output;
+	--w_data_filter <= fir_output;
 
 	smachine_1: process (reset,clk)
 	begin
@@ -201,24 +202,25 @@ begin
 		reset       => reset      	 	,
 		i_coeff     => coeff 			,
 		i_data      => w_data_test 		,
-		o_data     	=> fir_output		);
+	--	o_data     	=> fir_output		);
+		o_data     	=> o_data_buffer		);
 
-	u_fir_output_buffer : fir_output_buffer 
-	generic map( 
-		Win 		 => Win				, -- Input bit width
-		Wout 		 => Wout			,-- Output bit width
-		BUTTON_HIGH  => BUTTON_HIGH		,
-		PATTERN_SIZE => PATTERN_SIZE	,
-		RANGE_LOW	 => RANGE_LOW		, 
-		RANGE_HIGH 	 => RANGE_HIGH		,
-		LFilter  	 => LFilter			) -- Filter length
-	port map(
-		i_clk               => clk                ,
-		i_rstb              => reset              ,
-		i_write_enable      => w_write_enable     ,
-		i_data              => fir_output         ,
-		i_read_request      => i_read_request     ,
-		o_data              => o_data_buffer      ,
-		o_test_add          => o_test_add         );
+	--u_fir_output_buffer : fir_output_buffer 
+	--generic map( 
+	--	Win 		 => Win				, -- Input bit width
+	--	Wout 		 => Wout			,-- Output bit width
+	--	BUTTON_HIGH  => BUTTON_HIGH		,
+	--	PATTERN_SIZE => PATTERN_SIZE	,
+	--	RANGE_LOW	 => RANGE_LOW		, 
+	--	RANGE_HIGH 	 => RANGE_HIGH		,
+	--	LFilter  	 => LFilter			) -- Filter length
+	--port map(
+	--	i_clk               => clk                ,
+	--	i_rstb              => reset              ,
+	--	i_write_enable      => w_write_enable     ,
+	--	i_data              => fir_output         ,
+	--	i_read_request      => i_read_request     ,
+	--	o_data              => o_data_buffer      ,
+	--	o_test_add          => o_test_add         );
 
 end rtl;

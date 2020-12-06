@@ -161,7 +161,8 @@ signal w_h3_in              : std_logic_vector(3 downto 0);
 
 begin
 -- CLOCK and RESET
-w_rstb  <= pad_i_button(0);
+--w_rstb  <= '0', pad_i_button(0) after 132 ns; 
+w_rstb  <= pad_i_button(0); 
 w_clk   <= pad_i_clock_50;
 
 -- LED
@@ -177,46 +178,46 @@ pad_o_ledg(8)  <= pad_i_button(1);
 pad_o_ledg(9)  <= pad_i_button(0);
 
 -- SEVEN SEGMENT
-u_seven_seg_driver : seven_seg_driver
-port map(
--- input control
-	i_h0                 => w_h0_in          ,
-	i_h1                 => w_h1_in          ,
-	i_h2                 => w_h2_in          ,
-	i_h3                 => w_h3_in          ,
--- seven segment output
-	o_h0                 => pad_o_hex0_d     ,
-	o_h1                 => pad_o_hex1_d     ,
-	o_h2                 => pad_o_hex2_d     ,
-	o_h3                 => pad_o_hex3_d     );
+--u_seven_seg_driver : seven_seg_driver
+--port map(
+---- input control
+--	i_h0                 => w_h0_in          ,
+--	i_h1                 => w_h1_in          ,
+--	i_h2                 => w_h2_in          ,
+--	i_h3                 => w_h3_in          ,
+---- seven segment output
+--	o_h0                 => pad_o_hex0_d     ,
+--	o_h1                 => pad_o_hex1_d     ,
+--	o_h2                 => pad_o_hex2_d     ,
+--	o_h3                 => pad_o_hex3_d     );
 
 -- SEVEN SEGMENT
-w_h0_in           <= data_buffer(3 downto 0);
-w_h1_in           <= data_buffer(7 downto 4);
+--w_h0_in           <= data_buffer(3 downto 0);
+--w_h1_in           <= data_buffer(7 downto 4);
+--
+---- Wout = 10
+----w_h2_in           <= "00"&data_buffer(9 downto 8);
+---- Wout = 11
+----w_h2_in           <= "0"&data_buffer(10 downto 8);
+---- Wout = 12
+--w_h2_in           <= data_buffer(11 downto 8);
+--
+--w_h3_in           <= w_test_add(3 downto 0);1
 
--- Wout = 10
---w_h2_in           <= "00"&data_buffer(9 downto 8);
--- Wout = 11
---w_h2_in           <= "0"&data_buffer(10 downto 8);
--- Wout = 12
-w_h2_in           <= data_buffer(11 downto 8);
-
-w_h3_in           <= w_test_add(3 downto 0);
-
-pad_o_hex0_dp     <= '0';
+pad_o_hex0_dp     <= data_buffer(0);
 pad_o_hex1_dp     <= '0';
 pad_o_hex2_dp     <= '0';
 pad_o_hex3_dp     <= not w_test_add(4); -- MSB for address
 
 w_pattern_sel        <= pad_i_sw(9);
-w_start_generation   <= not pad_i_button(2);
-w_read_request       <= not pad_i_button(1);
+w_start_generation   <= '1';
+w_read_request       <= pad_i_clock_50;
 
-pad_b_gpio1_d(0) <= data_buffer(0);
---pad_b_gpio1_d(1) <= data_buffer(Wout-2);
---pad_b_gpio1_d(2) <= data_buffer(Wout-3);
---pad_b_gpio1_d(3) <= data_buffer(Wout-4);
---pad_b_gpio1_d(4) <= data_buffer(Wout-5);
+pad_b_gpio1_d(0) <= data_buffer(7);
+pad_b_gpio1_d(1) <= data_buffer(8);
+--pad_b_gpio1_d(2) <= data_buffer(20);
+--pad_b_gpio1_d(3) <= data_buffer(11);
+--pad_b_gpio1_d(4) <= data_buffer(13);
 --pad_b_gpio1_d(5) <= data_buffer(Wout-6);
 
 u_fir_filter_test : fir_filter_test
@@ -303,6 +304,6 @@ port map(
 	pad_b_gpio0_d         <= (others=>'Z');
 	pad_o_gpio1_clkout    <= "00";
 	--pad_b_gpio1_d(31 downto 5) <= (others=>'Z');
-	pad_b_gpio1_d(31 downto 1) <= (others=>'Z');
+	pad_b_gpio1_d(31 downto 2) <= (others=>'Z');
 
 end architecture rtl;
